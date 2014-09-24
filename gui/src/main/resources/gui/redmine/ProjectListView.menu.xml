@@ -1,0 +1,8 @@
+<menuBar>
+    <migrateSelected
+        name="migrate" 
+        text="Migrate..." 
+        toolBarGroup="1"
+        enableToolButtonText="true" 
+        icon="org/viewaframework/widget/icon/fan/img/wand/wand.png"/>
+</menuBar>

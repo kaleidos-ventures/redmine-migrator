@@ -1,0 +1,16 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <bean id="projectService" class="gui.projects.ProjectService">
+        <property name="redmineManager" ref="redmineManager"/>
+    </bean>
+
+    <bean id="redmineManager" class="com.taskadapter.redmineapi.RedmineManager">
+        <constructor-arg value="http://redmine.local"/>
+        <constructor-arg value="d0874f019e6291d6fb52c123e416e13509fa3bda"/>
+    </bean>
+
+</beans>
+

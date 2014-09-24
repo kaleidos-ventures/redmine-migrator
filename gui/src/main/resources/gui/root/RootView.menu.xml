@@ -1,0 +1,22 @@
+<menuBar>
+    <projects text="Projects">
+        <redmine
+            text="Redmine projects"
+            enableToolButtonText="false" 
+            enabled="false"
+            toolBarGroup="2"
+            keyStroke="CTRL_L"
+            icon="gui/img/redmine.png"/>
+        <separator/>
+        <settings
+            text="Settings"
+            enableToolButtonText="false" 
+            toolBarGroup="1"
+            keyStroke="CTRL_S"
+            icon="org/viewaframework/widget/icon/fan/img/wrench/wrench.png"/>
+        <separator/>
+        <exit 
+            name="exit"
+            keyStroke="CTRL_X"/>
+    </projects>
+</menuBar>
