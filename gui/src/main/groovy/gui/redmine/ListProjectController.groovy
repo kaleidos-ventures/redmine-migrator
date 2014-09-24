@@ -45,6 +45,7 @@ class ListProjectController extends
         def redmineApiKey = getContextAttribute("redmineApiKey")
         def redmineManager = new RedmineManager(redmineAddress, redmineApiKey)
 
+        setProgress(10)
         publish(redmineManager.projects)
     }
 
@@ -54,6 +55,11 @@ class ListProjectController extends
             .named(ProjectListView.ID)
             .model
             .addAll(chunks.flatten())
+    }
+
+    @Override
+    void handleViewProgress(ViewContainer view, ActionEvent event, Integer progress) {
+        println progress
     }
 
     @Override

@@ -14,7 +14,8 @@ import org.viewaframework.docking.mydoggy.MyDoggyPerspective
 //import org.viewaframework.integration.spring.SpringApplicationLauncher
 
 @Views([
-    @View(type=RootView,isRoot=true)
+    @View(type=RootView,isRoot=true),
+    @View(type=gui.console.ConsoleView, position=PerspectiveConstraint.BOTTOM)
 ])
 @ViewsPerspective(MyDoggyPerspective)
 class TaigaApp extends DefaultApplication {
