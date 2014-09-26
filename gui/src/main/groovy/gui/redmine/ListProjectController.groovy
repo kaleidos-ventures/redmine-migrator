@@ -69,6 +69,14 @@ class ListProjectController extends
             .model
             .rowCount
 
+        if (!rows) {
+            updateStatus("No results found", 0)
+            viewManager.addView(
+                new ExceptionView(new Exception("No results found please check your connection settings.Check log for more details"))
+            )
+            return
+        }
+
         updateStatus("Showing $rows Redmine projects ", 0)
     }
 
