@@ -24,7 +24,8 @@ dependencies {
     compile 'org.viewaframework:viewaframework-widget:1.0.7'
     compile 'org.viewaframework:viewaframework-spring:1.0.7'
     compile 'org.viewaframework:viewaframework-docking:1.0.7'
-    compile 'com.jgoodies:looks:2.2.2'
+    compile 'com.jgoodies:jgoodies-looks:2.5.2'
+    compile 'com.jgoodies:jgoodies-validation:2.5.0'
     compile 'org.oxbow:swing-bits:1.0.0-SNAPSHOT'
 
     // TAIGA MIGRATOR
