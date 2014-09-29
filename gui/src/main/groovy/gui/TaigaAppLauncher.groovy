@@ -11,7 +11,7 @@ class TaigaAppLauncher extends DefaultApplicationLauncher {
 
     LookAndFeel getLookAndFeel() {
         def lookAndFeel = new PlasticLookAndFeel()
-        lookAndFeel.setCurrentTheme(new ExperienceBlue())
+        lookAndFeel.setCurrentTheme(new ExperienceGreen())
 
         return lookAndFeel
     }
