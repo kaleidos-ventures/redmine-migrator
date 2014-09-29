@@ -17,7 +17,6 @@ import org.viewaframework.util.*
 import org.viewaframework.controller.*
 import org.viewaframework.view.perspective.*
 import org.viewaframework.widget.view.*
-//import org.viewaframework.ioc.IOCContext
 
 import com.taskadapter.redmineapi.RedmineManager
 import com.taskadapter.redmineapi.RedmineManagerFactory
@@ -37,6 +36,7 @@ class ListProjectController extends
     void preHandlingView(ViewContainer view, ActionEvent event) {
         updateStatus("Loading list...", 50)
         viewManager.addView(new ProjectListView(), PerspectiveConstraint.RIGHT)
+        view.rootPane.glassPane.visible = true
     }
 
     @Override
@@ -45,7 +45,6 @@ class ListProjectController extends
         def redmineApiKey = getContextAttribute("redmineApiKey")
         def redmineManager = new RedmineManager(redmineAddress, redmineApiKey)
 
-        setProgress(10)
         publish(redmineManager.projects)
     }
 
@@ -55,11 +54,8 @@ class ListProjectController extends
             .named(ProjectListView.ID)
             .model
             .addAll(chunks.flatten())
-    }
 
-    @Override
-    void handleViewProgress(ViewContainer view, ActionEvent event, Integer progress) {
-        println progress
+        view.rootPane.glassPane.visible = false
     }
 
     @Override
@@ -85,12 +81,7 @@ class ListProjectController extends
         def label = find(JLabel).in(viewManager.rootView).named(StatusBar.LEFT_PANEL_LABEL)
 
         progressBar.value = progress
-        progressBar.stringPainted = true
         label.text = message
     }
-
-    //def getSpringContext() {
-    //    return viewManager.application.applicationContext.getAttribute(IOCContext.ID)
-    //}
 
 }

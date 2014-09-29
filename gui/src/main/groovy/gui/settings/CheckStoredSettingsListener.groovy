@@ -4,10 +4,11 @@ import static org.viewaframework.util.ComponentFinder.find
 
 import javax.swing.JTextField
 
+import gui.controller.*
 import org.viewaframework.view.event.ViewContainerEvent
 import org.viewaframework.view.event.DefaultViewContainerEventController
 
-class CheckStoredSettingsListener extends DefaultViewContainerEventController {
+class CheckStoredSettingsListener extends GlassPaneAwareListener {
 
     @Override
     public void onViewInitBackActions(ViewContainerEvent event) {
