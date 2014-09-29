@@ -12,7 +12,7 @@ class SettingsForm extends javax.swing.JPanel {
         this.initComponents()
     }
 
-    private void initComponents() {
+    SettingsForm initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
@@ -65,6 +65,9 @@ class SettingsForm extends javax.swing.JPanel {
                     .addComponent(jButton1))
                 .addContainerGap(80, Short.MAX_VALUE))
         );
+
+
+        return this
     }// </editor-fold>
 
 
