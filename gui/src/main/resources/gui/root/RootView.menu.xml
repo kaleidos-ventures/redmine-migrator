@@ -13,7 +13,7 @@
             enableToolButtonText="false" 
             toolBarGroup="1"
             keyStroke="CTRL_S"
-            icon="org/viewaframework/widget/icon/fan/img/wrench/wrench.png"/>
+            icon="org/viewaframework/widget/icon/fan/img/server/server_connect.png"/>
         <separator/>
         <exit 
             name="exit"
