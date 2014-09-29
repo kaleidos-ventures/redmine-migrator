@@ -1,10 +1,12 @@
 package gui.settings
 
+import gui.controller.*
 import org.viewaframework.annotation.*
 import org.viewaframework.view.AbstractViewContainerDialog
 
 @Controllers([
-    @Controller(type=SettingsController, pattern="settingsAcceptButton|settingsCancelButton")
+    @Controller(type=SettingsController, pattern="settingsAcceptButton|settingsCancelButton"),
+    @Controller(type=CloseViewByKeyController, pattern="*")
 ])
 @Listeners([
     @Listener(id='xxx',type=CheckStoredSettingsListener)
