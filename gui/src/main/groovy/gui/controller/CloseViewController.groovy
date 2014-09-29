@@ -19,6 +19,14 @@ public class CloseViewController extends AbstractViewController<ActionListener,A
      */
     @Override
     public void postHandlingView(ViewContainer view, ActionEvent eventObject) throws ViewException{
+            view
+            .application
+            .viewManager
+            .rootView
+            .rootPane
+            .glassPane
+            .visible =false
+
         getViewManager().removeView(view);
     }
 }
