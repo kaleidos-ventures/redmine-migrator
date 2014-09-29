@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent
 import javax.swing.JButton
 import javax.swing.JMenuItem
 import javax.swing.JTextField
+import javax.swing.JPasswordField
 
 import org.viewaframework.view.ViewContainer
 import org.viewaframework.controller.AbstractActionController
@@ -19,12 +20,22 @@ class SettingsController extends AbstractActionController {
             return
         }
 
-        def addressField = find(JTextField).in(view).named('redmineUrl')
-        def apiKeyField = find(JTextField).in(view).named('redmineApiKey')
+        def textFieldFinder = find(JTextField).in(view)
+        def passwordFinder  = find(JPasswordField).in(view)
+
+        def addressField = textFieldFinder.named('redmineUrl')
+        def apiKeyField = textFieldFinder.named('redmineApiKey')
+        def taigaUrl = textFieldFinder.named('taigaUrl')
+        def taigaUsername = textFieldFinder.named('taigaUsername')
+        def taigaPassword =  passwordFinder.named('taigaPassword')
+
         def context = viewManager.application.applicationContext
 
         context.setAttribute('redmineUrl', addressField.text)
         context.setAttribute('redmineApiKey', apiKeyField.text)
+        context.setAttribute('taigaUrl', taigaUrl.text)
+        context.setAttribute('taigaUsername', taigaUsername.text)
+        context.setAttribute('taigaPassword', new String(taigaPassword?.password))
     }
 
     @Override
