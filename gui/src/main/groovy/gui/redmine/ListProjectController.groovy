@@ -35,8 +35,19 @@ class ListProjectController extends
     @Override
     void preHandlingView(ViewContainer view, ActionEvent event) {
         updateStatus("Loading list...", 50)
-        viewManager.addView(new ProjectListView(), PerspectiveConstraint.RIGHT)
+        def projectsView = getProjectListView()
+
+        if (!projectsView) {
+            projectsView = new ProjectListView()
+            viewManager.addView(projectsView , PerspectiveConstraint.RIGHT)
+        }
+
+        projectsView.model.clear()
         view.rootPane.glassPane.visible = true
+    }
+
+    ViewContainer getProjectListView() {
+        return locate(ProjectListView).named(ProjectListView.ID)
     }
 
     @Override
