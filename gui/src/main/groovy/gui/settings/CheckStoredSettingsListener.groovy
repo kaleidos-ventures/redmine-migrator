@@ -23,13 +23,13 @@ class CheckStoredSettingsListener extends GlassPaneAwareListener {
         def taigaUsername = textFieldFinder.named('taigaUsername')
         def taigaPassword = passwordFinder.named('taigaPassword')
 
-        def context = event.source.application.applicationContext
+        def settings = new SettingsService().loadSettings()
 
-        addressField.text = context.getAttribute('redmineUrl')
-        apiKeyField.text = context.getAttribute('redmineApiKey')
-        taigaUrl.text = context.getAttribute('taigaUrl')
-        taigaUsername.text = context.getAttribute('taigaUsername')
-        taigaPassword.text = context.getAttribute('taigaPassword')
+        addressField.text = settings.redmineUrl
+        apiKeyField.text = settings.redmineApiKey
+        taigaUrl.text = settings.taigaUrl
+        taigaUsername.text = settings.taigaUsername
+        taigaPassword.text = settings.taigaPassword
 
     }
 

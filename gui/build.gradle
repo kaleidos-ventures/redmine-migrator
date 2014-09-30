@@ -27,6 +27,7 @@ dependencies {
     compile 'com.jgoodies:jgoodies-looks:2.5.2'
     compile 'com.jgoodies:jgoodies-validation:2.5.0'
     compile 'org.oxbow:swing-bits:1.0.0-SNAPSHOT'
+    compile 'org.ini4j:ini4j:0.5.2'
 
     // TAIGA MIGRATOR
     compile project(':redmine')

@@ -23,19 +23,22 @@ class SettingsController extends AbstractActionController {
         def textFieldFinder = find(JTextField).in(view)
         def passwordFinder  = find(JPasswordField).in(view)
 
-        def addressField = textFieldFinder.named('redmineUrl')
-        def apiKeyField = textFieldFinder.named('redmineApiKey')
+        def redmineUrl = textFieldFinder.named('redmineUrl')
+        def redmineApiKey= textFieldFinder.named('redmineApiKey')
         def taigaUrl = textFieldFinder.named('taigaUrl')
         def taigaUsername = textFieldFinder.named('taigaUsername')
         def taigaPassword =  passwordFinder.named('taigaPassword')
 
-        def context = viewManager.application.applicationContext
+        def settings = new Settings(
+            redmineUrl: redmineUrl.text,
+            redmineApiKey: redmineApiKey.text,
+            taigaUrl: taigaUrl.text,
+            taigaUsername: taigaUsername.text,
+            taigaPassword: new String(taigaPassword?.password)
+        )
 
-        context.setAttribute('redmineUrl', addressField.text)
-        context.setAttribute('redmineApiKey', apiKeyField.text)
-        context.setAttribute('taigaUrl', taigaUrl.text)
-        context.setAttribute('taigaUsername', taigaUsername.text)
-        context.setAttribute('taigaPassword', new String(taigaPassword?.password))
+        new SettingsService().saveSettings(settings)
+
     }
 
     @Override

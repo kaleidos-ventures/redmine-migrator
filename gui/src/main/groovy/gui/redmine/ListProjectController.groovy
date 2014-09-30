@@ -22,6 +22,7 @@ import com.taskadapter.redmineapi.RedmineManager
 import com.taskadapter.redmineapi.RedmineManagerFactory
 import com.taskadapter.redmineapi.bean.Project
 
+import gui.settings.SettingsService
 import gui.controller.DefaultViewControllerWorker
 
 class ListProjectController extends
@@ -52,9 +53,11 @@ class ListProjectController extends
 
     @Override
     void handleView(ViewContainer view, ActionEvent event) {
-        def redmineAddress = getContextAttribute("redmineUrl")
-        def redmineApiKey = getContextAttribute("redmineApiKey")
-        def redmineManager = new RedmineManager(redmineAddress, redmineApiKey)
+        def settings = new SettingsService().loadSettings()
+        def redmineManager =
+            new RedmineManager(
+                settings.redmineUrl,
+                settings.redmineApiKey)
 
         publish(redmineManager.projects)
     }
