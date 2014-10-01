@@ -9,7 +9,6 @@
         <redmine
             text="Redmine projects"
             enableToolButtonText="false" 
-            enabled="false"
             toolBarGroup="3"
             keyStroke="CTRL_R"
             icon="gui/img/redmine.png"/>

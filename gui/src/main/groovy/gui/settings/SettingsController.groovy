@@ -43,10 +43,6 @@ class SettingsController extends AbstractActionController {
 
     @Override
     void postHandlingView(ViewContainer view, ActionEvent event) {
-        // enable to list redmine projects
-        find(JButton).in(locateRootView()).named('redmine').enabled = true
-        find(JMenuItem).in(locateRootView()).named('redmine').enabled = true
-
         // removing settings view
         viewManager.removeView(view)
     }
