@@ -1,12 +1,17 @@
-package gui.redmine
+package gui.taiga
 
 import static org.viewaframework.util.ComponentFinder.find
 
-import javax.swing.*
+import org.jdesktop.swingx.JXList
+
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 
-import groovy.util.logging.Log4j
+import javax.swing.JLabel
+import javax.swing.JButton
+import javax.swing.JTextField
+import javax.swing.JProgressBar
+import javax.swing.DefaultListModel
 
 import org.viewaframework.view.*
 import org.viewaframework.util.*
@@ -14,22 +19,21 @@ import org.viewaframework.controller.*
 import org.viewaframework.view.perspective.*
 import org.viewaframework.widget.view.*
 
-import com.taskadapter.redmineapi.RedmineManager
-import com.taskadapter.redmineapi.RedmineManagerFactory
-import com.taskadapter.redmineapi.bean.Project
-
+import gui.taiga.TaigaProjectListView
 import gui.settings.SettingsService
+import gui.exception.ExceptionView
 import gui.migration.MigrationProgress
 import gui.migration.MigrationProgressView
 import gui.controller.DefaultViewControllerWorker
 
+import groovy.util.logging.Log4j
+
+import net.kaleidos.domain.Project
 import net.kaleidos.taiga.TaigaClient
-import net.kaleidos.redmine.RedmineClientFactory
-import net.kaleidos.redmine.migrator.RedmineMigrator
 
 @Log4j
-class MigrateSelectedController extends
-    DefaultViewControllerWorker<ActionListener, ActionEvent, String, MigrationProgress> {
+class DeleteTaigaProjectController extends
+    DefaultViewControllerWorker<ActionListener, ActionEvent, String, Project> {
 
     @Override
     Class<ActionListener> getSupportedClass() {
@@ -38,40 +42,38 @@ class MigrateSelectedController extends
 
     @Override
     void preHandlingView(ViewContainer view, ActionEvent event) {
+        viewManager.removeView(view)
         viewManager.addView(new MigrationProgressView())
     }
 
     @Override
     void handleView(ViewContainer view, ActionEvent event) {
-        List<Project> selectedProjectList =
-            locate(ProjectListView.ID)
-                .model
-                .selectedObjects
-        def total = selectedProjectList.size()
+        def model = locate(TaigaProjectListView.ID).model
+        def selectedProjectList = model.selectedObjects
 
+        log.debug('Deleting selected projects')
+        def total = selectedProjectList?.size()
         def settings = new SettingsService().loadSettings()
-        def redmineClient =
-            RedmineClientFactory.newInstance(
-                settings.redmineUrl,
-                settings.redmineApiKey)
         def taigaClient =
             new TaigaClient(settings.taigaUrl)
                 .authenticate(
                     settings.taigaUsername,
                     settings.taigaPassword)
-        def migrator = new RedmineMigrator(redmineClient, taigaClient)
 
-        selectedProjectList.eachWithIndex { Project p, index ->
-            // publishing progress
+        selectedProjectList.eachWithIndex { Map p, index ->
+            log.debug("deleting ${p.name}")
             publish(
                 new MigrationProgress(
                     projectName: p.name,
                     progress: index.div(total)
                 )
             )
-            // migrating project
-            migrator.migrateProject(p)
+            taigaClient.deleteProject(new Project(id:p.id, name:p.name))
+            log.debug("project ${p.name} deleted")
         }
+        log.debug("Updating list")
+        model.addAll(taigaClient.projects)
+        log.debug("All selected projects deleted")
 
         publish(new MigrationProgress(progress:1.0))
     }
@@ -87,12 +89,12 @@ class MigrateSelectedController extends
 
         if (migrationProgress.progress.intValue() == 1) {
             closeButton.enabled = true
-            loggingProgress.text = "Migration Finished!!!"
+            loggingProgress.text = "Task Finished!!!"
             progressBar.setValue(100)
             return
         }
 
-        loggingProgress.text = "Migrating project: ${migrationProgress.projectName}"
+        loggingProgress.text = "Deleting project: ${migrationProgress.projectName}"
         progressBar.setValue((migrationProgress.progress * 100).intValue())
 
     }
