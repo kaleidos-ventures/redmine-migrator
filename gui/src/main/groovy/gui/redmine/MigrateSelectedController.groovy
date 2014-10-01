@@ -18,9 +18,14 @@ import com.taskadapter.redmineapi.RedmineManager
 import com.taskadapter.redmineapi.RedmineManagerFactory
 import com.taskadapter.redmineapi.bean.Project
 
+import gui.settings.SettingsService
 import gui.migration.MigrationProgress
 import gui.migration.MigrationProgressView
 import gui.controller.DefaultViewControllerWorker
+
+import net.kaleidos.taiga.TaigaClient
+import net.kaleidos.redmine.RedmineClientFactory
+import net.kaleidos.redmine.migrator.RedmineMigrator
 
 @Log4j
 class MigrateSelectedController extends
@@ -44,18 +49,30 @@ class MigrateSelectedController extends
                 .selectedObjects
         def total = selectedProjectList.size()
 
+        def settings = new SettingsService().loadSettings()
+        def redmineClient =
+            RedmineClientFactory.newInstance(
+                settings.redmineUrl,
+                settings.redmineApiKey)
+        def taigaClient =
+            new TaigaClient(settings.taigaUrl)
+                .authenticate(
+                    settings.taigaUsername,
+                    settings.taigaPassword)
+        def migrator = new RedmineMigrator(redmineClient, taigaClient)
+
         selectedProjectList.eachWithIndex { Project p, index ->
-            Thread.sleep(1000)
-            log.debug("Migrating project ${p.name}")
+            // publishing progress
             publish(
                 new MigrationProgress(
                     project: p,
                     progress: index.div(total)
                 )
             )
+            // migrating project
+            migrator.migrateProject(p)
         }
 
-        Thread.sleep(1000)
         publish(new MigrationProgress(progress:1.0))
     }
 
