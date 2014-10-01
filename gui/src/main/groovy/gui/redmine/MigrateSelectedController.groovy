@@ -10,7 +10,6 @@ import groovy.util.logging.Log4j
 
 import org.viewaframework.view.*
 import org.viewaframework.util.*
-import org.viewaframework.controller.*
 import org.viewaframework.view.perspective.*
 import org.viewaframework.widget.view.*
 
@@ -21,20 +20,14 @@ import com.taskadapter.redmineapi.bean.Project
 import gui.settings.SettingsService
 import gui.migration.MigrationProgress
 import gui.migration.MigrationProgressView
-import gui.controller.DefaultViewControllerWorker
+import gui.controller.DefaultActionViewControllerWorker
 
 import net.kaleidos.taiga.TaigaClient
 import net.kaleidos.redmine.RedmineClientFactory
 import net.kaleidos.redmine.migrator.RedmineMigrator
 
 @Log4j
-class MigrateSelectedController extends
-    DefaultViewControllerWorker<ActionListener, ActionEvent, String, MigrationProgress> {
-
-    @Override
-    Class<ActionListener> getSupportedClass() {
-        return ActionListener
-    }
+class MigrateSelectedController extends DefaultActionViewControllerWorker<MigrationProgress> {
 
     @Override
     void preHandlingView(ViewContainer view, ActionEvent event) {
@@ -48,8 +41,8 @@ class MigrateSelectedController extends
                 .model
                 .selectedObjects
         def total = selectedProjectList.size()
-
         def settings = new SettingsService().loadSettings()
+
         def redmineClient =
             RedmineClientFactory.newInstance(
                 settings.redmineUrl,
@@ -62,14 +55,12 @@ class MigrateSelectedController extends
         def migrator = new RedmineMigrator(redmineClient, taigaClient)
 
         selectedProjectList.eachWithIndex { Project p, index ->
-            // publishing progress
             publish(
                 new MigrationProgress(
                     projectName: p.name,
                     progress: index.div(total)
                 )
             )
-            // migrating project
             migrator.migrateProject(p)
         }
 
