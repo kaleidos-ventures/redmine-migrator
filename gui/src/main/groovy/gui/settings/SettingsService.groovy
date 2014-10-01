@@ -11,6 +11,7 @@ class SettingsService {
         )
 
     void saveSettings(final Settings settings) {
+        checkConfigFileExists()
 
         Ini ini = new Ini(configFile)
 
@@ -21,6 +22,12 @@ class SettingsService {
         ini.put('Taiga','password', settings.taigaPassword)
 
         ini.store(configFile)
+    }
+
+    void checkConfigFileExists() {
+        if (!configFile.exists()) {
+            configFile.createNewFile()
+        }
     }
 
     Settings loadSettings() {
