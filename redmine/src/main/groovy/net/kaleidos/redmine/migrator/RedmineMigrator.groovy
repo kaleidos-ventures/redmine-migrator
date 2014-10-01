@@ -26,24 +26,7 @@ class RedmineMigrator {
     }
 
     public void migrateProject(RedmineProject redmineProject) {
-
-        log.debug("*" * 30)
-        log.debug("*" * 30)
-        log.debug("DELETING ALL PROYECTS | "* 2)
-        log.debug("*" * 30)
-        log.debug("*" * 30)
-        taigaClient.with {
-            projects.each { p ->
-                log.debug "Deleting project '${p.name}' with id ${p.id}"
-                deleteProject(new Project(id:p.id))
-            }
-        }
-
-        log.debug("*" * 30)
-        log.debug("*" * 30)
         log.debug("MIGRATING ${redmineProject.name}")
-        log.debug("*" * 30)
-        log.debug("*" * 30)
 
         projectMigrator
             .migrateProject(redmineProject)
@@ -62,34 +45,24 @@ class RedmineMigrator {
                 return ref
             }
 
-        log.debug("*" * 30)
-        log.debug("*" * 30)
         log.debug("PROJECT ${redmineProject.name} SUCCESSFULLY MIGRATED")
+
+    }
+
+    public void deleteAllProjects() {
         log.debug("*" * 30)
         log.debug("*" * 30)
-
+        log.debug("*" * 30)
+        log.debug("DELETING ALL PROYECTS | "* 2)
+        log.debug("*" * 30)
+        log.debug("*" * 30)
+        log.debug("*" * 30)
+        taigaClient.with {
+            projects.each { p ->
+                log.debug "Deleting project '${p.name}' with id ${p.id}"
+                deleteProject(new Project(id:p.id))
+            }
+        }
     }
-
-    static TaigaClient createTaigaClient(String specialUser) {
-        def config =
-            new ConfigSlurper()
-                .parse(new File("src/test/resources/taiga${specialUser ? '_' + specialUser : ''}.groovy").text)
-        def client = new TaigaClient(config.host)
-
-        return client.authenticate(config.user, config.passwd)
-    }
-
-    static RedmineClient createRedmineClient() {
-        def config =
-            new ConfigSlurper()
-                .parse(new File('src/test/resources/redmine.groovy').text)
-        def client =
-            RedmineClientFactory.newInstance(config.host, config.apiKey)
-
-        return client
-    }
-
-
-
 
 }

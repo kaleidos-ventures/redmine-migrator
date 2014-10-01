@@ -36,7 +36,9 @@ dependencies {
     testCompile 'junit:junit:4.11'
 }
 
-task run(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
+task migratorUI(type: JavaExec) {
+    group = 'taiga'
+    description = 'Runs migrator GUI'
     main = 'gui.TaigaApp'
+    classpath = sourceSets.main.runtimeClasspath
 }
