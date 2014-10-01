@@ -17,7 +17,7 @@ class ConsoleAppender extends AppenderSkeleton {
 
     @Override
     void append(LoggingEvent event) {
-        if(event.logger.name.contains('Dynamic')) {
+        if(!event.logger.name.contains('net.kaleidos')) {
             return
         }
         def currentTime = Calendar.getInstance()
