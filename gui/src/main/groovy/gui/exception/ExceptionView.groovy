@@ -1,4 +1,4 @@
-package gui.redmine
+package gui.exception
 
 import com.taskadapter.redmineapi.bean.Project
 

@@ -1,4 +1,4 @@
-package gui.redmine
+package gui.taiga
 
 import static org.viewaframework.util.ComponentFinder.find
 
@@ -18,15 +18,14 @@ import org.viewaframework.controller.*
 import org.viewaframework.view.perspective.*
 import org.viewaframework.widget.view.*
 
-import com.taskadapter.redmineapi.RedmineManager
-import com.taskadapter.redmineapi.RedmineManagerFactory
-import com.taskadapter.redmineapi.bean.Project
+import net.kaleidos.domain.Project
+import net.kaleidos.taiga.TaigaClient
 
 import gui.exception.ExceptionView
 import gui.settings.SettingsService
 import gui.controller.DefaultViewControllerWorker
 
-class ListProjectController extends
+class TaigaProjectListController extends
     DefaultViewControllerWorker<ActionListener, ActionEvent, String, Project> {
 
     @Override
@@ -36,11 +35,11 @@ class ListProjectController extends
 
     @Override
     void preHandlingView(ViewContainer view, ActionEvent event) {
-        updateStatus("Loading list...", 50)
+        updateStatus("Loading taiga list...", 50)
         def projectsView = getProjectListView()
 
         if (!projectsView) {
-            projectsView = new ProjectListView()
+            projectsView = new TaigaProjectListView()
             viewManager.addView(projectsView , PerspectiveConstraint.RIGHT)
         }
 
@@ -49,24 +48,27 @@ class ListProjectController extends
     }
 
     ViewContainer getProjectListView() {
-        return locate(ProjectListView).named(ProjectListView.ID)
+        return locate(TaigaProjectListView).named(TaigaProjectListView.ID)
     }
 
     @Override
     void handleView(ViewContainer view, ActionEvent event) {
         def settings = new SettingsService().loadSettings()
-        def redmineManager =
-            new RedmineManager(
-                settings.redmineUrl,
-                settings.redmineApiKey)
+        def taigaClient =
+            new TaigaClient(settings.taigaUrl)
+                .authenticate(
+                    settings.taigaUsername,
+                    settings.taigaPassword
+                )
 
-        publish(redmineManager.projects)
+
+        publish(taigaClient.projects)
     }
 
     @Override
     void handleViewPublising(ViewContainer view, ActionEvent event, List<Project> chunks) {
-        locate(ProjectListView)
-            .named(ProjectListView.ID)
+        locate(TaigaProjectListView)
+            .named(TaigaProjectListView.ID)
             .model
             .addAll(chunks.flatten())
 
@@ -75,8 +77,8 @@ class ListProjectController extends
 
     @Override
     void postHandlingView(ViewContainer viewContainer, ActionEvent event) {
-        def rows = locate(ProjectListView)
-            .named(ProjectListView.ID)
+        def rows = locate(TaigaProjectListView)
+            .named(TaigaProjectListView.ID)
             .model
             .rowCount
 
@@ -88,7 +90,7 @@ class ListProjectController extends
             return
         }
 
-        updateStatus("Showing $rows Redmine projects ", 0)
+        updateStatus("Showing $rows Taiga projects ", 0)
     }
 
     void updateStatus(String message, Integer progress) {

@@ -1,0 +1,8 @@
+<menuBar>
+    <deleteSelected
+        name="Delete" 
+        text="Delete..." 
+        toolBarGroup="1"
+        enableToolButtonText="true" 
+        icon="org/viewaframework/widget/icon/fan/img/page/page_delete.png"/>
+</menuBar>

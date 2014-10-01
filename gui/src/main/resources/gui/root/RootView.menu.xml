@@ -1,11 +1,17 @@
 <menuBar>
     <projects text="Projects">
+        <taiga
+            text="Taiga projects"
+            enableToolButtonText="false" 
+            toolBarGroup="2"
+            keyStroke="CTRL_T"
+            icon="gui/img/taiga.png"/>
         <redmine
             text="Redmine projects"
             enableToolButtonText="false" 
             enabled="false"
             toolBarGroup="2"
-            keyStroke="CTRL_L"
+            keyStroke="CTRL_R"
             icon="gui/img/redmine.png"/>
         <separator/>
         <settings

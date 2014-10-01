@@ -1,4 +1,4 @@
-package gui.redmine
+package gui.exception
 
 import java.awt.*
 import javax.swing.*
