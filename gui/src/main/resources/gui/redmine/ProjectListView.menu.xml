@@ -5,4 +5,9 @@
         toolBarGroup="1"
         enableToolButtonText="true" 
         icon="org/viewaframework/widget/icon/fan/img/wand/wand.png"/>
+    <closeTab
+        name="closeTab" 
+        toolBarGroup="1"
+        enableToolButtonText="true" 
+        icon="org/viewaframework/widget/icon/fan/img/door/door_in.png"/>
 </menuBar>

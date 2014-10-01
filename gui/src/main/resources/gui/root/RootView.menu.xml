@@ -3,26 +3,29 @@
         <taiga
             text="Taiga projects"
             enableToolButtonText="false" 
-            toolBarGroup="2"
+            toolBarGroup="3"
             keyStroke="CTRL_T"
             icon="gui/img/taiga.png"/>
         <redmine
             text="Redmine projects"
             enableToolButtonText="false" 
             enabled="false"
-            toolBarGroup="2"
+            toolBarGroup="3"
             keyStroke="CTRL_R"
             icon="gui/img/redmine.png"/>
         <separator/>
         <settings
             text="Settings"
             enableToolButtonText="false" 
-            toolBarGroup="1"
+            toolBarGroup="2"
             keyStroke="CTRL_S"
             icon="org/viewaframework/widget/icon/fan/img/server/server_connect.png"/>
         <separator/>
         <exit 
             name="exit"
+            toolBarGroup="1"
+            enableToolButtonText="false" 
+            icon="org/viewaframework/widget/icon/fan/img/door/door_in.png"
             keyStroke="CTRL_X"/>
     </projects>
 </menuBar>

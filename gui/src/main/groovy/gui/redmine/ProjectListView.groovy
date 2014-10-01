@@ -1,6 +1,6 @@
 package gui.redmine
 
-
+import gui.controller.*
 import com.taskadapter.redmineapi.bean.Project
 
 import org.viewaframework.annotation.*
@@ -9,7 +9,8 @@ import org.viewaframework.widget.view.ui.*
 import org.viewaframework.view.DefaultViewContainer
 
 @Controllers([
-    @Controller(type=MigrateSelectedController,pattern='migrateSelected')
+    @Controller(type=MigrateSelectedController,pattern='migrateSelected'),
+    @Controller(type=CloseViewController,pattern='closeTab')
 ])
 class ProjectListView extends MasterView<Project> {
 
