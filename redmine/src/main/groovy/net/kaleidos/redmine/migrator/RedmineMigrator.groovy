@@ -45,20 +45,4 @@ class RedmineMigrator {
 
     }
 
-    public void deleteAllProjects() {
-        log.debug("*" * 30)
-        log.debug("*" * 30)
-        log.debug("*" * 30)
-        log.debug("DELETING ALL PROYECTS | "* 2)
-        log.debug("*" * 30)
-        log.debug("*" * 30)
-        log.debug("*" * 30)
-        taigaClient.with {
-            projects.each { p ->
-                log.debug "Deleting project '${p.name}' with id ${p.id}"
-                deleteProject(new Project(id:p.id))
-            }
-        }
-    }
-
 }
