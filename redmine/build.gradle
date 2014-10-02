@@ -11,13 +11,18 @@ apply plugin: 'groovy'
 apply plugin: 'idea'
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.3.6'
-    compile 'org.codehaus.gpars:gpars:1.2.0'
+    compile 'org.codehaus.groovy:groovy:2.3.6'
     compile 'log4j:log4j:1.2.17'
-    compile 'com.taskadapter:redmine-java-api:1.26-SNAPSHOT'
-    compile 'com.github.groovy-wslite:groovy-wslite:1.1.0'
-    compile 'com.github.slugify:slugify:2.1.2'
 
+    compile 'com.taskadapter:redmine-java-api:1.26-SNAPSHOT'
+    compile('net.kaleidos:taiga-importer-api-client:1.0.0') {
+        exclude module: 'log4j'
+        exclude module: 'gpars'
+        exclude module: 'groovy'
+        exclude module: 'groovy-all'
+    }
+
+    compile 'com.github.slugify:slugify:2.1.2'
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
 }
 
