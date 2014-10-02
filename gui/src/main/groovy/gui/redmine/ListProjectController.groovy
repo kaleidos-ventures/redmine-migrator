@@ -7,10 +7,11 @@ import org.jdesktop.swingx.JXList
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 
-import javax.swing.DefaultListModel
 import javax.swing.JLabel
-import javax.swing.JProgressBar
+import javax.swing.JButton
 import javax.swing.JTextField
+import javax.swing.JProgressBar
+import javax.swing.DefaultListModel
 
 import org.viewaframework.view.*
 import org.viewaframework.util.*
@@ -65,30 +66,34 @@ class ListProjectController extends
 
     @Override
     void handleViewPublising(ViewContainer view, ActionEvent event, List<Project> chunks) {
-        locate(ProjectListView)
-            .named(ProjectListView.ID)
-            .model
-            .addAll(chunks.flatten())
+        projectListView.model.addAll(chunks.flatten())
 
         view.rootPane.glassPane.visible = false
     }
 
     @Override
     void postHandlingView(ViewContainer viewContainer, ActionEvent event) {
-        def rows = locate(ProjectListView)
-            .named(ProjectListView.ID)
-            .model
-            .rowCount
+        def rows = projectListView.model.rowCount
 
         if (!rows) {
+            setMigrationButtonEnabled(false)
             updateStatus("No results found", 0)
-            viewManager.addView(
-                new ExceptionView(new Exception("No results found please check your connection settings.Check log for more details"))
-            )
             return
         }
 
+        setMigrationButtonEnabled(true)
         updateStatus("Showing $rows Redmine projects ", 0)
+    }
+
+    ProjectListView getProjectListView() {
+        locate(ProjectListView).named(ProjectListView.ID)
+    }
+
+    void setMigrationButtonEnabled(boolean enabled) {
+        find(JButton)
+            .in(projectListView)
+            .named('migrateSelected')
+            .setEnabled(enabled)
     }
 
     void updateStatus(String message, Integer progress) {

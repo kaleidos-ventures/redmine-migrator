@@ -7,10 +7,11 @@ import org.jdesktop.swingx.JXList
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 
-import javax.swing.DefaultListModel
 import javax.swing.JLabel
-import javax.swing.JProgressBar
+import javax.swing.JButton
 import javax.swing.JTextField
+import javax.swing.JProgressBar
+import javax.swing.DefaultListModel
 
 import org.viewaframework.view.*
 import org.viewaframework.util.*
@@ -77,20 +78,27 @@ class TaigaProjectListController extends
 
     @Override
     void postHandlingView(ViewContainer viewContainer, ActionEvent event) {
-        def rows = locate(TaigaProjectListView)
-            .named(TaigaProjectListView.ID)
-            .model
-            .rowCount
+        def rows = taigaProjectListView.model.rowCount
 
         if (!rows) {
-            updateStatus("No results found", 0)
-            viewManager.addView(
-                new ExceptionView(new Exception("No results found please check your connection settings.Check log for more details"))
-            )
+            updateStatus("No Taiga projects found", 0)
+            setDeleteButtonEnabled(false)
             return
         }
 
+        setDeleteButtonEnabled(true)
         updateStatus("Showing $rows Taiga projects ", 0)
+    }
+
+    void setDeleteButtonEnabled(boolean enabled) {
+        find(JButton)
+            .in(taigaProjectListView)
+            .named('deleteSelected')
+            .setEnabled(enabled)
+    }
+
+    TaigaProjectListView getTaigaProjectListView() {
+        locate(TaigaProjectListView).named(TaigaProjectListView.ID)
     }
 
     void updateStatus(String message, Integer progress) {

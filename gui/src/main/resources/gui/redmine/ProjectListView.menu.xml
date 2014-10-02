@@ -1,18 +1,16 @@
 <menuBar>
     <migrateSelected
-        name="migrate" 
         text="Migrate..." 
         toolBarGroup="1"
+        enabled="false"
         enableToolButtonText="true" 
         icon="org/viewaframework/widget/icon/fan/img/wand/wand.png"/>
     <refresh
-        name="refresh" 
         text="Refresh list..." 
         toolBarGroup="1"
         enableToolButtonText="true" 
         icon="org/viewaframework/widget/icon/fan/img/arrow/arrow_rotate_clockwise.png"/>
     <closeTab
-        name="closeTab" 
         toolBarGroup="2"
         enableToolButtonText="true" 
         icon="org/viewaframework/widget/icon/fan/img/door/door_in.png"/>

@@ -105,6 +105,7 @@ class DeleteTaigaProjectController extends
             progressBar.setValue(100)
             progressBar.setBackground(java.awt.Color.RED)
             busyLabel.setFailure()
+            setDeleteButtonEnabled(taigaProjectListView.model.rowCount > 0)
             return
         }
 
@@ -113,12 +114,24 @@ class DeleteTaigaProjectController extends
             loggingProgress.text = "Task Finished!!!"
             progressBar.setValue(100)
             busyLabel.setSuccess()
+            setDeleteButtonEnabled(taigaProjectListView.model.rowCount > 0)
             return
         }
 
         loggingProgress.text = "Deleting project: ${migrationProgress.projectName}"
         progressBar.setValue((migrationProgress.progress * 100).intValue())
 
+    }
+
+    void setDeleteButtonEnabled(boolean enabled) {
+        find(JButton)
+            .in(taigaProjectListView)
+            .named('deleteSelected')
+            .setEnabled(enabled)
+    }
+
+    TaigaProjectListView getTaigaProjectListView() {
+        locate(TaigaProjectListView).named(TaigaProjectListView.ID)
     }
 
 }

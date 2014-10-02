@@ -2,6 +2,7 @@
     <deleteSelected
         name="delete" 
         toolBarGroup="1"
+        enabled="false"
         enableToolButtonText="true" 
         icon="org/viewaframework/widget/icon/fan/img/page/page_delete.png"/>
     <refresh
