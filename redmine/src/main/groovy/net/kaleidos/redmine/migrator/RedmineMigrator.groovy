@@ -30,39 +30,20 @@ class RedmineMigrator {
 
         projectMigrator
             .migrateProject(redmineProject)
-            .collect { RedmineTaigaRef ref ->
-                try {
-                    log.debug "Migrating issues from ${ref.redmineIdentifier}"
-                    issueMigrator.migrateIssuesByProject(ref)
+            .each { RedmineTaigaRef ref ->
+                log.debug "Migrating issues from ${ref.redmineIdentifier}"
+                issueMigrator.migrateIssuesByProject(ref)
 
-                    log.debug "Migrating wikipages from ${ref.redmineIdentifier}"
-                    wikiMigrator.setWikiHomePage(wikiMigrator.migrateWikiPagesByProject(ref))
-                } catch (e) {
-                    log.error "Error while migrating: ${ref.redmineIdentifier}"
+                log.debug "Migrating wikipages from ${ref.redmineIdentifier}"
+                def possibleWikiPages = wikiMigrator.migrateWikiPagesByProject(ref)
+                log.debug("Wiki pages found: ${possibleWikiPages.size()}")
+                if (possibleWikiPages) {
+                    wikiMigrator.setWikiHomePage(possibleWikiPages)
                 }
-                // Los proyectos que se devuelvan son los que estan migrados
-                // completamente
-                return ref
             }
 
         log.debug("PROJECT ${redmineProject.name} SUCCESSFULLY MIGRATED")
 
-    }
-
-    public void deleteAllProjects() {
-        log.debug("*" * 30)
-        log.debug("*" * 30)
-        log.debug("*" * 30)
-        log.debug("DELETING ALL PROYECTS | "* 2)
-        log.debug("*" * 30)
-        log.debug("*" * 30)
-        log.debug("*" * 30)
-        taigaClient.with {
-            projects.each { p ->
-                log.debug "Deleting project '${p.name}' with id ${p.id}"
-                deleteProject(new Project(id:p.id))
-            }
-        }
     }
 
 }

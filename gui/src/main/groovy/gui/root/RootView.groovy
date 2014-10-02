@@ -1,5 +1,6 @@
 package gui.root
 
+import gui.about.OpenAboutTaigaController
 import gui.redmine.ListProjectController
 import gui.taiga.TaigaProjectListController
 
@@ -14,7 +15,8 @@ import org.viewaframework.widget.controller.ExitActionController
     @Controller(type=ExitActionController,pattern=ExitActionController.EXIT_PATTERN),
     @Controller(type=OpenSettingsController, pattern = 'settings'),
     @Controller(type=ListProjectController, pattern = 'redmine'),
-    @Controller(type=TaigaProjectListController, pattern = 'taiga')
+    @Controller(type=TaigaProjectListController, pattern = 'taiga'),
+    @Controller(type=OpenAboutTaigaController, pattern = 'aboutTaiga'),
 ])
 @Listeners([
     @Listener(id='translucent',type=RootViewListener)

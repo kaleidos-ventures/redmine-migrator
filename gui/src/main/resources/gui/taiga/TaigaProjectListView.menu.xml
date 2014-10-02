@@ -2,11 +2,18 @@
     <deleteSelected
         name="delete" 
         toolBarGroup="1"
+        enabled="false"
         enableToolButtonText="true" 
         icon="org/viewaframework/widget/icon/fan/img/page/page_delete.png"/>
+    <refresh
+        name="refresh" 
+        text="Refresh list..." 
+        toolBarGroup="1"
+        enableToolButtonText="true" 
+        icon="org/viewaframework/widget/icon/fan/img/arrow/arrow_rotate_clockwise.png"/>
     <closeTab
         name="closeTab" 
-        toolBarGroup="1"
+        toolBarGroup="2"
         enableToolButtonText="true" 
         icon="org/viewaframework/widget/icon/fan/img/door/door_in.png"/>
 </menuBar>

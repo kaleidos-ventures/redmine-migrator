@@ -10,7 +10,8 @@ import org.viewaframework.view.DefaultViewContainer
 
 @Controllers([
     @Controller(type=CloseViewController, pattern='closeTab'),
-    @Controller(type=TaigaProjectDeletionWarningController, pattern='deleteSelected')
+    @Controller(type=TaigaProjectDeletionWarningController, pattern='deleteSelected'),
+    @Controller(type=TaigaProjectListController, pattern='refresh'),
 ])
 class TaigaProjectListView extends MasterView<Project> {
 

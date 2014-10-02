@@ -17,6 +17,7 @@ import com.taskadapter.redmineapi.RedmineManager
 import com.taskadapter.redmineapi.RedmineManagerFactory
 import com.taskadapter.redmineapi.bean.Project
 
+import gui.swingx.JXBusyFeedbackLabel
 import gui.settings.SettingsService
 import gui.migration.MigrationProgress
 import gui.migration.MigrationProgressView
@@ -54,17 +55,28 @@ class MigrateSelectedController extends DefaultActionViewControllerWorker<Migrat
                     settings.taigaPassword)
         def migrator = new RedmineMigrator(redmineClient, taigaClient)
 
-        selectedProjectList.eachWithIndex { Project p, index ->
+        try { // TODO viewa postHandlingOnError doesnt work
+            selectedProjectList.eachWithIndex { Project p, index ->
+                publish(
+                    new MigrationProgress(
+                        projectName: p.name,
+                        progress: index.div(total)
+                    )
+                )
+                migrator.migrateProject(p)
+            }
+
+            publish(new MigrationProgress(progress:1.0))
+        } catch(Throwable th) {
             publish(
                 new MigrationProgress(
-                    projectName: p.name,
-                    progress: index.div(total)
+                    exception: th,
+                    progress:0.0
                 )
             )
-            migrator.migrateProject(p)
         }
 
-        publish(new MigrationProgress(progress:1.0))
+
     }
 
     @Override
@@ -75,11 +87,22 @@ class MigrateSelectedController extends DefaultActionViewControllerWorker<Migrat
         def progressBar = find(JProgressBar).in(progressView).named('migrationProgressBar')
         def loggingProgress = find(JLabel).in(progressView).named('loggingProgress')
         def closeButton = find(JButton).in(progressView).named('closeButton')
+        def busyLabel = find(JXBusyFeedbackLabel).in(progressView).named('outputIconLabel')
+
+        if (migrationProgress.exception) {
+            log.error("Exception while migrating: ${migrationProgress.exception.message}")
+            closeButton.enabled = true
+            loggingProgress.text = "Migration Failed!!! Please check log"
+            progressBar.setValue(100)
+            busyLabel.setFailure()
+            return
+        }
 
         if (migrationProgress.progress.intValue() == 1) {
             closeButton.enabled = true
             loggingProgress.text = "Migration Finished!!!"
             progressBar.setValue(100)
+            busyLabel.setSuccess()
             return
         }
 
