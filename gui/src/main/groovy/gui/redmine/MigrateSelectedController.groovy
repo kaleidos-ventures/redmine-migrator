@@ -17,6 +17,7 @@ import com.taskadapter.redmineapi.RedmineManager
 import com.taskadapter.redmineapi.RedmineManagerFactory
 import com.taskadapter.redmineapi.bean.Project
 
+import gui.swingx.JXBusyFeedbackLabel
 import gui.settings.SettingsService
 import gui.migration.MigrationProgress
 import gui.migration.MigrationProgressView
@@ -86,12 +87,14 @@ class MigrateSelectedController extends DefaultActionViewControllerWorker<Migrat
         def progressBar = find(JProgressBar).in(progressView).named('migrationProgressBar')
         def loggingProgress = find(JLabel).in(progressView).named('loggingProgress')
         def closeButton = find(JButton).in(progressView).named('closeButton')
+        def busyLabel = find(JXBusyFeedbackLabel).in(progressView).named('outputIconLabel')
 
         if (migrationProgress.exception) {
             log.error("Exception while migrating: ${migrationProgress.exception.message}")
             closeButton.enabled = true
             loggingProgress.text = "Migration Failed!!! Please check log"
-            progressBar.setValue(0)
+            progressBar.setValue(100)
+            busyLabel.setFailure()
             return
         }
 
@@ -99,6 +102,7 @@ class MigrateSelectedController extends DefaultActionViewControllerWorker<Migrat
             closeButton.enabled = true
             loggingProgress.text = "Migration Finished!!!"
             progressBar.setValue(100)
+            busyLabel.setSuccess()
             return
         }
 

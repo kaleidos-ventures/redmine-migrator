@@ -19,6 +19,7 @@ import org.viewaframework.controller.*
 import org.viewaframework.view.perspective.*
 import org.viewaframework.widget.view.*
 
+import gui.swingx.JXBusyFeedbackLabel
 import gui.taiga.TaigaProjectListView
 import gui.settings.SettingsService
 import gui.exception.ExceptionView
@@ -60,16 +61,25 @@ class DeleteTaigaProjectController extends
                     settings.taigaUsername,
                     settings.taigaPassword)
 
-        selectedProjectList.eachWithIndex { Map p, index ->
-            log.debug("deleting ${p.name}")
+        try {
+            selectedProjectList.eachWithIndex { Map p, index ->
+                log.debug("deleting ${p.name}")
+                publish(
+                    new MigrationProgress(
+                        projectName: p.name,
+                        progress: index.div(total)
+                    )
+                )
+                taigaClient.deleteProject(new Project(id:p.id, name:p.name))
+                log.debug("project ${p.name} deleted")
+            }
+        } catch (Throwable th) {
             publish(
                 new MigrationProgress(
-                    projectName: p.name,
-                    progress: index.div(total)
+                    exception: th,
+                    progress: 1.0
                 )
             )
-            taigaClient.deleteProject(new Project(id:p.id, name:p.name))
-            log.debug("project ${p.name} deleted")
         }
         log.debug("Updating list")
         model.addAll(taigaClient.projects)
@@ -86,11 +96,23 @@ class DeleteTaigaProjectController extends
         def progressBar = find(JProgressBar).in(progressView).named('migrationProgressBar')
         def loggingProgress = find(JLabel).in(progressView).named('loggingProgress')
         def closeButton = find(JButton).in(progressView).named('closeButton')
+        def busyLabel = find(JXBusyFeedbackLabel).in(progressView).named('outputIconLabel')
+
+        if (migrationProgress.exception) {
+            log.error("Exception while migrating: ${migrationProgress.exception.message}")
+            closeButton.enabled = true
+            loggingProgress.text = "Migration Failed!!! Please check log"
+            progressBar.setValue(100)
+            progressBar.setBackground(java.awt.Color.RED)
+            busyLabel.setFailure()
+            return
+        }
 
         if (migrationProgress.progress.intValue() == 1) {
             closeButton.enabled = true
             loggingProgress.text = "Task Finished!!!"
             progressBar.setValue(100)
+            busyLabel.setSuccess()
             return
         }
 
