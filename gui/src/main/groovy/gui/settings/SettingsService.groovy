@@ -31,6 +31,7 @@ class SettingsService {
     }
 
     Settings loadSettings() {
+        checkConfigFileExists()
 
         Ini ini = new Ini(configFile)
 
