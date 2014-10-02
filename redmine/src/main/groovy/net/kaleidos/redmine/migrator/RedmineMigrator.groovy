@@ -30,15 +30,12 @@ class RedmineMigrator {
 
         projectMigrator
             .migrateProject(redmineProject)
-            .collect { RedmineTaigaRef ref ->
-                    log.debug "Migrating issues from ${ref.redmineIdentifier}"
-                    issueMigrator.migrateIssuesByProject(ref)
+            .each { RedmineTaigaRef ref ->
+                log.debug "Migrating issues from ${ref.redmineIdentifier}"
+                issueMigrator.migrateIssuesByProject(ref)
 
-                    log.debug "Migrating wikipages from ${ref.redmineIdentifier}"
-                    wikiMigrator.setWikiHomePage(wikiMigrator.migrateWikiPagesByProject(ref))
-                // Los proyectos que se devuelvan son los que estan migrados
-                // completamente
-                return ref
+                log.debug "Migrating wikipages from ${ref.redmineIdentifier}"
+                wikiMigrator.setWikiHomePage(wikiMigrator.migrateWikiPagesByProject(ref))
             }
 
         log.debug("PROJECT ${redmineProject.name} SUCCESSFULLY MIGRATED")
