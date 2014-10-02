@@ -15,9 +15,8 @@ dependencies {
     compile 'log4j:log4j:1.2.17'
 
     compile 'com.taskadapter:redmine-java-api:1.26-SNAPSHOT'
-    compile('net.kaleidos:taiga-importer-api-client:1.0.0') {
+    compile('net.kaleidos:taiga-importer-api-client:1.0.1') {
         exclude module: 'log4j'
-        exclude module: 'gpars'
         exclude module: 'groovy'
         exclude module: 'groovy-all'
     }
