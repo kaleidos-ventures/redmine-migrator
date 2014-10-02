@@ -17,7 +17,12 @@ class ConsoleAppender extends AppenderSkeleton {
 
     @Override
     void append(LoggingEvent event) {
-        if(!event.logger.name.contains('net.kaleidos')) {
+        boolean valid =
+            event.logger.name.startsWith('net.kaleidos') ||
+            event.logger.name.startsWith('gui')
+
+
+        if(!valid) {
             return
         }
         def currentTime = Calendar.getInstance()
