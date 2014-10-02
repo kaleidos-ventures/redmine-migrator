@@ -26,5 +26,14 @@
             enableToolButtonText="false" 
             icon="org/viewaframework/widget/icon/fan/img/door/door_in.png"
             keyStroke="CTRL_X"/>
+        
+
     </projects>
+    <about text="About">
+        <aboutTaiga
+            toolBarGroup="4"
+            enableToolButtonText="false" 
+            icon="org/viewaframework/widget/icon/fan/img/misc/help.png"
+            keyStroke="CTRL_I"/>
+    </about>
 </menuBar>
