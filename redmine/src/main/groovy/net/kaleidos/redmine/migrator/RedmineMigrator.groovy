@@ -35,7 +35,11 @@ class RedmineMigrator {
                 issueMigrator.migrateIssuesByProject(ref)
 
                 log.debug "Migrating wikipages from ${ref.redmineIdentifier}"
-                wikiMigrator.setWikiHomePage(wikiMigrator.migrateWikiPagesByProject(ref))
+                def possibleWikiPages = wikiMigrator.migrateWikiPagesByProject(ref)
+                log.debug("Wiki pages found: ${possibleWikiPages.size()}")
+                if (possibleWikiPages) {
+                    wikiMigrator.setWikiHomePage(possibleWikiPages)
+                }
             }
 
         log.debug("PROJECT ${redmineProject.name} SUCCESSFULLY MIGRATED")
