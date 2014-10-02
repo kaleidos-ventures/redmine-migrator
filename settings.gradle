@@ -1,0 +1,5 @@
+
+rootProject.name = 'taigator'
+
+include 'redmine'
+include 'gui'

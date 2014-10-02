@@ -1,0 +1,12 @@
+<menuBar>
+    <deleteSelected
+        name="delete" 
+        toolBarGroup="1"
+        enableToolButtonText="true" 
+        icon="org/viewaframework/widget/icon/fan/img/page/page_delete.png"/>
+    <closeTab
+        name="closeTab" 
+        toolBarGroup="1"
+        enableToolButtonText="true" 
+        icon="org/viewaframework/widget/icon/fan/img/door/door_in.png"/>
+</menuBar>

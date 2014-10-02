@@ -1,0 +1,44 @@
+apply plugin: 'groovy'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven {
+        url 'http://viewaframework.sourceforge.net/m2-repo'
+    }
+    maven {
+        url 'http://dl.bintray.com/kaleidos/maven'
+    }
+    maven {
+        url 'https://github.com/eugener/oxbow/raw/master/maven/repository'
+    }
+}
+
+// In this section you declare the dependencies for your production and test code
+dependencies {
+    compile 'org.codehaus.groovy:groovy:2.3.3'
+
+    // GUI DEPENDENCIES
+    compile 'org.viewaframework:viewaframework-core:1.0.7'
+    compile 'org.viewaframework:viewaframework-swing:1.0.7'
+    compile 'org.viewaframework:viewaframework-widget:1.0.7'
+    compile 'org.viewaframework:viewaframework-spring:1.0.7'
+    compile 'org.viewaframework:viewaframework-docking:1.0.7'
+    compile 'com.jgoodies:jgoodies-looks:2.5.2'
+    compile 'com.jgoodies:jgoodies-validation:2.5.0'
+    compile 'org.oxbow:swing-bits:1.0.0-SNAPSHOT'
+    compile 'org.ini4j:ini4j:0.5.2'
+
+    // TAIGA MIGRATOR
+    compile project(':redmine')
+
+    testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
+    testCompile 'junit:junit:4.11'
+}
+
+task migratorUI(type: JavaExec) {
+    group = 'taiga'
+    description = 'Runs migrator GUI'
+    main = 'gui.TaigaApp'
+    classpath = sourceSets.main.runtimeClasspath
+}
