@@ -39,6 +39,7 @@ class IssueMigrator extends AbstractMigrator<TaigaIssue> {
             redmineClient.findUserFullById(source.author.id)
 
         return new TaigaIssue(
+            ref: source.id,
             project: taigaProject,
             type: source.tracker.name,
             status: source.statusName,
