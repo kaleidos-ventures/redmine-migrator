@@ -20,8 +20,12 @@ class IssueMigrator extends AbstractMigrator<TaigaIssue> {
     final String SEVERITY_NORMAL = 'Normal'
 
     List<TaigaIssue> migrateIssuesByProject(final RedmineTaigaRef ref) {
-        return redmineClient
-            .findAllIssueByProjectIdentifier(ref.redmineIdentifier)
+        def issueList =
+            redmineClient.findAllIssueByProjectIdentifier(ref.redmineIdentifier)
+
+        log.debug("Migrating ${issueList.size()} issues from Redmine project ${ref.redmineIdentifier}")
+
+        return issueList
             .collect(this.&populateIssue)
             .collect(this.&addRedmineIssueToTaigaProject.rcurry(ref.project))
             .collect(this.&save)
@@ -92,6 +96,7 @@ class IssueMigrator extends AbstractMigrator<TaigaIssue> {
 
     @Override
     TaigaIssue save(TaigaIssue issue) {
+        log.debug("Saving issue from -${issue.project.name}- : ${issue.subject} ")
         return taigaClient.createIssue(issue)
     }
 

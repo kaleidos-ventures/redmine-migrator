@@ -56,22 +56,25 @@ class MigrateSelectedController extends DefaultActionViewControllerWorker<Migrat
         def migrator = new RedmineMigrator(redmineClient, taigaClient)
 
         try { // TODO viewa postHandlingOnError doesnt work
-            selectedProjectList.eachWithIndex { Project p, index ->
-                publish(
-                    new MigrationProgress(
-                        projectName: p.name,
-                        progress: index.div(total)
+            def projectListSize = selectedProjectList.size()
+            selectedProjectList.eachWithIndex { Project project, index ->
+                migrator.migrateProject(
+                    project,
+                    progressClosure(
+                        project.name,
+                        (index + 1).div(projectListSize + 1)
                     )
                 )
-                migrator.migrateProject(p)
             }
 
-            publish(new MigrationProgress(progress:1.0))
+            publish(new MigrationProgress(message:"Migration Finished Successfully", progress:1.0))
+
         } catch(Throwable th) {
             publish(
                 new MigrationProgress(
                     exception: th,
-                    progress:0.0
+                    message: "Migration Failed!!! Please check log",
+                    progress: 1.0
                 )
             )
         }
@@ -79,36 +82,69 @@ class MigrateSelectedController extends DefaultActionViewControllerWorker<Migrat
 
     }
 
+    Closure<Void> progressClosure = { final String projectName, final BigDecimal overallProgress ->
+        return { String message, BigDecimal progress = overallProgress ->
+             publish(
+                new MigrationProgress(
+                    projectName: projectName,
+                    message: message,
+                    progress: progress
+                )
+            )
+        }
+    }
+
     @Override
     void handleViewPublising(ViewContainer view, ActionEvent event, List<MigrationProgress> chunks) {
-        def migrationProgress = chunks.first()
-        def progressView = locate(MigrationProgressView).named(MigrationProgressView.ID)
-
-        def progressBar = find(JProgressBar).in(progressView).named('migrationProgressBar')
-        def loggingProgress = find(JLabel).in(progressView).named('loggingProgress')
-        def closeButton = find(JButton).in(progressView).named('closeButton')
-        def busyLabel = find(JXBusyFeedbackLabel).in(progressView).named('outputIconLabel')
+        MigrationProgress migrationProgress = chunks.first()
+        setProgressFeedback(migrationProgress)
 
         if (migrationProgress.exception) {
             log.error("Exception while migrating: ${migrationProgress.exception.message}")
             closeButton.enabled = true
-            loggingProgress.text = "Migration Failed!!! Please check log"
-            progressBar.setValue(100)
             busyLabel.setFailure()
             return
         }
 
-        if (migrationProgress.progress.intValue() == 1) {
+        if (migrationProgress.progress >= 1) {
             closeButton.enabled = true
-            loggingProgress.text = "Migration Finished!!!"
-            progressBar.setValue(100)
             busyLabel.setSuccess()
             return
         }
 
-        loggingProgress.text = "Migrating project: ${migrationProgress.projectName}"
-        progressBar.setValue((migrationProgress.progress * 100).intValue())
+    }
 
+    void setProgressFeedback(MigrationProgress migrationProgress) {
+        progressMessageLabel.text = buildMessage(migrationProgress)
+        migrationProgressBar.setValue((migrationProgress.progress * 100).intValue())
+    }
+
+    String buildMessage(MigrationProgress migrationProgress) {
+        if (!migrationProgress.projectName) {
+            return migrationProgress.message
+        }
+
+        return "${migrationProgress.projectName} : ${migrationProgress.message}"
+    }
+
+    JXBusyFeedbackLabel getBusyLabel() {
+        return find(JXBusyFeedbackLabel).in(progressView).named('outputIconLabel')
+    }
+
+    JButton getCloseButton() {
+        return find(JButton).in(progressView).named('closeButton')
+    }
+
+    JProgressBar getMigrationProgressBar() {
+        return find(JProgressBar).in(progressView).named('migrationProgressBar')
+    }
+
+    JLabel getProgressMessageLabel() {
+        return find(JLabel).in(progressView).named('loggingProgress')
+    }
+
+    MigrationProgressView getProgressView() {
+        return locate(MigrationProgressView).named(MigrationProgressView.ID)
     }
 
 }
