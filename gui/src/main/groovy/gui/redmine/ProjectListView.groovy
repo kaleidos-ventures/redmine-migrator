@@ -10,7 +10,6 @@ import org.viewaframework.view.DefaultViewContainer
 
 @Controllers([
     @Controller(type=MigrateSelectedController,pattern='migrateSelected'),
-    @Controller(type=CloseViewController,pattern='closeTab'),
     @Controller(type=ListProjectController,pattern='refresh')
 ])
 class ProjectListView extends MasterView<Project> {
