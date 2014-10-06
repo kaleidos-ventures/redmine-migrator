@@ -81,8 +81,10 @@ class RedmineClientImpl implements RedmineClient {
     }
 
     @groovy.transform.Memoized
-    User findUserFullById(Integer userId){
-        return redmineManager.getUserById(userId)
+    User findUserFullById(Integer userId) {
+        // If there is no user it could be because the issue is assigned to a group
+        // that case we are assigning the issue to the current user
+        return redmineManager.getUserById(userId) ?: redmineManager.currentUser
     }
 
     @Override
