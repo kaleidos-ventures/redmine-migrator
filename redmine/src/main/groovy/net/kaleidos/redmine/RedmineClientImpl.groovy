@@ -11,6 +11,7 @@ import com.taskadapter.redmineapi.bean.User
 import com.taskadapter.redmineapi.bean.Version
 import com.taskadapter.redmineapi.bean.WikiPage
 import com.taskadapter.redmineapi.bean.WikiPageDetail
+import com.taskadapter.redmineapi.RedmineManager.INCLUDE
 
 class RedmineClientImpl implements RedmineClient {
 
@@ -72,7 +73,11 @@ class RedmineClientImpl implements RedmineClient {
 
     @Override
     Issue findIssueById(Integer issueId) {
-        return redmineManager.getIssueById(issueId)
+        return redmineManager.getIssueById(
+            issueId,
+            INCLUDE.attachments,
+            INCLUDE.journals
+        )
     }
 
     @groovy.transform.Memoized

@@ -60,7 +60,25 @@ class IssueMigrator extends AbstractMigrator<TaigaIssue> {
     }
 
     List<TaigaAttachment> extractIssueAttachments(final RedmineIssue issue) {
-        return issue.attachments.collect(this.&convertToTaigaAttachment)
+        log.debug("Adding ${issue.attachments.size()} attacments to issue ${issue.subject}")
+
+        def attachments =
+            issue
+                .attachments
+                .collect(executeSafelyAndWarn(this.&convertToTaigaAttachment))
+                .findAll { it } // TODO replace with findResults
+
+        return attachments
+    }
+
+    def executeSafelyAndWarn = { action ->
+        return { source ->
+            try {
+                action(source)
+            } catch(Throwable e) {
+                log.warn(e.message)
+            }
+        }
     }
 
     TaigaAttachment convertToTaigaAttachment(RedmineAttachment att) {
