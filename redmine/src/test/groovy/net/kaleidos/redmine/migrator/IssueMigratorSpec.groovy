@@ -101,6 +101,41 @@ class IssueMigratorSpec extends MigratorToTaigaSpecBase {
             migratedIssues.every(basicData)
     }
 
+    RedmineClient buildRedmineClientWithIssuesWithoutOwners() {
+        // Reusing general stub
+        def stub = buildRedmineClientToCreateProject()
+
+        // Modifying only how we're getting issues
+        stub.findAllIssueByProjectIdentifier(_) >> {
+            buildRedmineIssueList().collect {
+                it.author= null
+                it.assignee = null
+                it
+            }
+        }
+
+        return stub
+    }
+
+    void 'migrating project issue history only with comments'() {
+        given: 'a mocked redmine client'
+            RedmineClient redmineClient = buildRedmineClientToCreateProject()
+            TaigaClient taigaClient = createTaigaClient()
+        and: 'building a migrator instances'
+            ProjectMigrator projectMigrator = new ProjectMigrator(redmineClient, taigaClient)
+            IssueMigrator issueMigrator = new IssueMigrator(redmineClient, taigaClient)
+        when: 'migrating a given project'
+            RedmineTaigaRef migratedProjectInfo = projectMigrator.migrateProject(buildRedmineProject())
+        and: 'trying to migrate basic the estructure of related issues'
+            List<TaigaIssue> migratedIssues = issueMigrator.migrateIssuesByProject(migratedProjectInfo)
+            TaigaIssue firstTaigaIssue = migratedIssues.first()
+            TaigaAttachment firstIssueAttachment = firstTaigaIssue.attachments.first()
+            TaigaHistory firstIssueHistory = firstTaigaIssue.history.first()
+        then: 'checking basic request data'
+            migratedIssues.size() > 0
+            migratedIssues.every(basicData)
+    }
+
     Closure<Boolean> basicData = {
         it.ref &&
         it.type &&
@@ -116,26 +151,7 @@ class IssueMigratorSpec extends MigratorToTaigaSpecBase {
         it.history
     }
 
-    RedmineClient buildRedmineClientWithIssuesWithoutOwners() {
-        return Stub(RedmineClient) {
-            findAllMembershipByProjectIdentifier(_) >> buildRedmineMembershipList()
-            findUserFullById(_) >> { Integer id -> buildRedmineUser("${randomTime}") }
-            findAllTracker() >> buildRedmineTrackerList()
-            findAllIssueStatus() >> buildRedmineStatusList()
-            findAllIssuePriority() >> buildRedmineIssuePriorityList()
-            findAllIssueByProjectIdentifier(_) >> buildRedmineIssueList().collect {
-                it.author= null
-                it.assignee = null
-                it
-            }
-            findIssueById(_) >> { Integer index ->
-                def redmineIssue = buildRedmineIssueWithIndex(index)
-                redmineIssue.attachments = buildAttachmentList()
-                redmineIssue.journals = buildHistoryList()
-                redmineIssue
-            }
-        }
-    }
+
 
 }
 

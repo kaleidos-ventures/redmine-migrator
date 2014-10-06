@@ -52,10 +52,17 @@ class IssueDataProvider {
     }
 
     RedmineHistory buildHistoryWithIndex(Integer index) {
+        def even = index % 2 == 0
        return new RedmineHistory(
             user:[id: 245, name: 'Ronnie'] as RedmineUser,
             createdOn: new Date() - 10,
-            notes: "some comment on history ${index}"
+            notes: even ? "some comment on history ${index}" : "",
+            details: even ? null : [[
+                property: "attr",
+                name: "done_ratio",
+                old_value: "0",
+                new_value: "100"
+            ]]
        )
     }
 

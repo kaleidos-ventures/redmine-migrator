@@ -95,7 +95,15 @@ class IssueMigrator extends AbstractMigrator<TaigaIssue> {
     }
 
     List<TaigaHistory> extractIssueHistory(final RedmineIssue issue) {
-        return issue.journals.collect(this.&convertToTaigaHistory)
+        //We are only interested in migrating those historic entries
+        //containing notes, not data changes entries
+        def comments =
+            issue
+                .journals
+                .findAll { it.notes }
+                .collect(this.&convertToTaigaHistory)
+
+        return comments
     }
 
     TaigaHistory convertToTaigaHistory(RedmineHistory journal) {
