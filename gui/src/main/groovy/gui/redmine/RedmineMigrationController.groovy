@@ -17,8 +17,9 @@ import com.taskadapter.redmineapi.RedmineManager
 import com.taskadapter.redmineapi.RedmineManagerFactory
 import com.taskadapter.redmineapi.bean.Project
 
-import gui.swingx.JXBusyFeedbackLabel
+import gui.settings.Settings
 import gui.settings.SettingsService
+import gui.swingx.JXBusyFeedbackLabel
 import gui.migration.MigrationProgress
 import gui.migration.MigrationProgressView
 import gui.controller.DefaultActionViewControllerWorker
@@ -28,7 +29,7 @@ import net.kaleidos.redmine.RedmineClientFactory
 import net.kaleidos.redmine.migrator.RedmineMigrator
 
 @Log4j
-class MigrateSelectedController extends DefaultActionViewControllerWorker<MigrationProgress> {
+class RedmineMigrationController extends DefaultActionViewControllerWorker<MigrationProgress> {
 
     @Override
     void preHandlingView(ViewContainer view, ActionEvent event) {
@@ -37,13 +38,71 @@ class MigrateSelectedController extends DefaultActionViewControllerWorker<Migrat
 
     @Override
     void handleView(ViewContainer view, ActionEvent event) {
-        List<Project> selectedProjectList =
-            locate(ProjectListView.ID)
-                .model
-                .selectedObjects
+        def selectedProjectList = view.model.selectedObjects
         def total = selectedProjectList.size()
         def settings = new SettingsService().loadSettings()
+        def migrator = buildMigratorWithSettings(settings)
 
+        try {
+
+            selectedProjectList.eachWithIndex { Project project, index ->
+                migrator.migrateProject(
+                    project,
+                    progressClosure(project.name, (index + 1).div(total + 1))
+                )
+            }
+
+            publishSuccess()
+
+        } catch(Throwable th) {
+           publishFailure(th)
+        }
+
+    }
+
+    @Override
+    void handleViewPublising(ViewContainer view, ActionEvent event, List<MigrationProgress> chunks) {
+        MigrationProgress migrationProgress = chunks.first()
+        setProgressFeedback(migrationProgress)
+
+        if (migrationProgress.exception) {
+            log.error("Exception while migrating: ${migrationProgress.exception.message}")
+            busyLabel.setFailure()
+            return
+        }
+
+        if (migrationProgress.progress >= 1) {
+            busyLabel.setSuccess()
+            return
+        }
+
+    }
+
+    @Override
+    void postHandlingView(ViewContainer view, ActionEvent event) {
+        closeButton.enabled = true
+    }
+
+    void publishSuccess() {
+        publish(
+            new MigrationProgress(
+                message:"Migration Finished Successfully",
+                progress:1.0
+            )
+        )
+    }
+
+    void publishFailure(Throwable th) {
+        publish(
+            new MigrationProgress(
+                exception: th,
+                message: "Migration Failed!!! Please check log",
+                progress: 1.0
+            )
+        )
+    }
+
+    RedmineMigrator buildMigratorWithSettings(Settings settings) {
         def redmineClient =
             RedmineClientFactory.newInstance(
                 settings.redmineUrl,
@@ -53,33 +112,8 @@ class MigrateSelectedController extends DefaultActionViewControllerWorker<Migrat
                 .authenticate(
                     settings.taigaUsername,
                     settings.taigaPassword)
-        def migrator = new RedmineMigrator(redmineClient, taigaClient)
 
-        try { // TODO viewa postHandlingOnError doesnt work
-            def projectListSize = selectedProjectList.size()
-            selectedProjectList.eachWithIndex { Project project, index ->
-                migrator.migrateProject(
-                    project,
-                    progressClosure(
-                        project.name,
-                        (index + 1).div(projectListSize + 1)
-                    )
-                )
-            }
-
-            publish(new MigrationProgress(message:"Migration Finished Successfully", progress:1.0))
-
-        } catch(Throwable th) {
-            publish(
-                new MigrationProgress(
-                    exception: th,
-                    message: "Migration Failed!!! Please check log",
-                    progress: 1.0
-                )
-            )
-        }
-
-
+        return new RedmineMigrator(redmineClient, taigaClient)
     }
 
     Closure<Void> progressClosure = { final String projectName, final BigDecimal overallProgress ->
@@ -92,26 +126,6 @@ class MigrateSelectedController extends DefaultActionViewControllerWorker<Migrat
                 )
             )
         }
-    }
-
-    @Override
-    void handleViewPublising(ViewContainer view, ActionEvent event, List<MigrationProgress> chunks) {
-        MigrationProgress migrationProgress = chunks.first()
-        setProgressFeedback(migrationProgress)
-
-        if (migrationProgress.exception) {
-            log.error("Exception while migrating: ${migrationProgress.exception.message}")
-            closeButton.enabled = true
-            busyLabel.setFailure()
-            return
-        }
-
-        if (migrationProgress.progress >= 1) {
-            closeButton.enabled = true
-            busyLabel.setSuccess()
-            return
-        }
-
     }
 
     void setProgressFeedback(MigrationProgress migrationProgress) {
