@@ -9,15 +9,14 @@ import org.viewaframework.widget.view.ui.*
 import org.viewaframework.view.DefaultViewContainer
 
 @Controllers([
-    @Controller(type=MigrateSelectedController,pattern='migrateSelected'),
-    @Controller(type=CloseViewController,pattern='closeTab'),
-    @Controller(type=ListProjectController,pattern='refresh')
+    @Controller(type=RedmineMigrationController,pattern='migrateSelected'),
+    @Controller(type=RedmineProjectListController,pattern='refresh')
 ])
-class ProjectListView extends MasterView<Project> {
+class RedmineProjectListView extends MasterView<Project> {
 
     static final ID = 'projectListViewID'
 
-    ProjectListView() {
+    RedmineProjectListView() {
         super(ID, [
             new MasterViewColumn("id", 20),
             new MasterViewColumn("name", 200),

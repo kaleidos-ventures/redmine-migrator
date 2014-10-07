@@ -25,18 +25,28 @@ class RedmineMigrator {
         this.wikiMigrator = new WikiMigrator(redmineClient, taigaClient)
     }
 
-    public void migrateProject(RedmineProject redmineProject) {
+    public void migrateProject(
+        final RedmineProject redmineProject,
+        final Closure progressCallBack = { String message, BigDecimal progress = 0.0 -> } ) {
+
+        progressCallBack("Creating project")
         log.debug("MIGRATING ${redmineProject.name}")
 
         projectMigrator
             .migrateProject(redmineProject)
             .each { RedmineTaigaRef ref ->
                 log.debug "Migrating issues from ${ref.redmineIdentifier}"
+
+                progressCallBack("Migrating issues")
                 issueMigrator.migrateIssuesByProject(ref)
 
                 log.debug "Migrating wikipages from ${ref.redmineIdentifier}"
+
+                progressCallBack("Migrating wiki pages")
                 def possibleWikiPages = wikiMigrator.migrateWikiPagesByProject(ref)
+
                 log.debug("Wiki pages found: ${possibleWikiPages.size()}")
+
                 if (possibleWikiPages) {
                     wikiMigrator.setWikiHomePage(possibleWikiPages)
                 }

@@ -1,0 +1,9 @@
+<menuBar>
+    <clearLog
+        text="Clear log"
+        enableToolButtonText="false" 
+        toolBarGroup="1"
+        keyStroke="CTRL_C"
+        icon="org/viewaframework/widget/icon/fan/img/bin/bin_closed.png"/>
+</menuBar>
+

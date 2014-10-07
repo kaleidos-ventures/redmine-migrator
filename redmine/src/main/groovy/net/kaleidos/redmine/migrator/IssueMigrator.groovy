@@ -20,8 +20,12 @@ class IssueMigrator extends AbstractMigrator<TaigaIssue> {
     final String SEVERITY_NORMAL = 'Normal'
 
     List<TaigaIssue> migrateIssuesByProject(final RedmineTaigaRef ref) {
-        return redmineClient
-            .findAllIssueByProjectIdentifier(ref.redmineIdentifier)
+        def issueList =
+            redmineClient.findAllIssueByProjectIdentifier(ref.redmineIdentifier)
+
+        log.debug("Migrating ${issueList.size()} issues from Redmine project ${ref.redmineIdentifier}")
+
+        return issueList
             .collect(this.&populateIssue)
             .collect(this.&addRedmineIssueToTaigaProject.rcurry(ref.project))
             .collect(this.&save)
@@ -39,6 +43,7 @@ class IssueMigrator extends AbstractMigrator<TaigaIssue> {
             redmineClient.findUserFullById(source.author.id)
 
         return new TaigaIssue(
+            ref: source.id,
             project: taigaProject,
             type: source.tracker.name,
             status: source.statusName,
@@ -55,7 +60,25 @@ class IssueMigrator extends AbstractMigrator<TaigaIssue> {
     }
 
     List<TaigaAttachment> extractIssueAttachments(final RedmineIssue issue) {
-        return issue.attachments.collect(this.&convertToTaigaAttachment)
+        log.debug("Adding ${issue.attachments.size()} attacments to issue ${issue.subject}")
+
+        def attachments =
+            issue
+                .attachments
+                .collect(executeSafelyAndWarn(this.&convertToTaigaAttachment))
+                .findAll { it } // TODO replace with findResults
+
+        return attachments
+    }
+
+    def executeSafelyAndWarn = { action ->
+        return { source ->
+            try {
+                action(source)
+            } catch(Throwable e) {
+                log.warn(e.message)
+            }
+        }
     }
 
     TaigaAttachment convertToTaigaAttachment(RedmineAttachment att) {
@@ -72,7 +95,15 @@ class IssueMigrator extends AbstractMigrator<TaigaIssue> {
     }
 
     List<TaigaHistory> extractIssueHistory(final RedmineIssue issue) {
-        return issue.journals.collect(this.&convertToTaigaHistory)
+        //We are only interested in migrating those historic entries
+        //containing notes, not data changes entries
+        def comments =
+            issue
+                .journals
+                .findAll { it.notes }
+                .collect(this.&convertToTaigaHistory)
+
+        return comments
     }
 
     TaigaHistory convertToTaigaHistory(RedmineHistory journal) {
@@ -91,6 +122,7 @@ class IssueMigrator extends AbstractMigrator<TaigaIssue> {
 
     @Override
     TaigaIssue save(TaigaIssue issue) {
+        log.debug("Saving issue from -${issue.project.name}- : ${issue.subject} ")
         return taigaClient.createIssue(issue)
     }
 

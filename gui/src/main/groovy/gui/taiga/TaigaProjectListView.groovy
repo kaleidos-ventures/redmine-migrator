@@ -9,7 +9,6 @@ import org.viewaframework.widget.view.ui.*
 import org.viewaframework.view.DefaultViewContainer
 
 @Controllers([
-    @Controller(type=CloseViewController, pattern='closeTab'),
     @Controller(type=TaigaProjectDeletionWarningController, pattern='deleteSelected'),
     @Controller(type=TaigaProjectListController, pattern='refresh'),
 ])
@@ -20,6 +19,7 @@ class TaigaProjectListView extends MasterView<Project> {
     TaigaProjectListView() {
         super(ID, [
             new MasterViewColumn("id", 5),
+            new MasterViewColumn("slug", 5),
             new MasterViewColumn("name", 100),
             new MasterViewColumn("description", 100),
         ])

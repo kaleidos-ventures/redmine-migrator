@@ -32,7 +32,7 @@ class ProjectMigrator extends AbstractMigrator<TaigaProject> {
             getMembershipsByProjectIdentifier(redmineProject.identifier)
 
         return new TaigaProject(
-            name: "${redmineProject.name} - [${redmineProject.identifier}]",
+            name: redmineProject.name,
             description: redmineProject.with { description ?: name },
             roles: memberships?.role?.unique(),
             memberships: memberships,

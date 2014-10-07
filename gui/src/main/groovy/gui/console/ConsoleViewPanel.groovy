@@ -25,7 +25,7 @@ class ConsoleViewPanel extends JScrollPane {
     public ConsoleViewPanel initComponents() {
         loggingTableModel = new DynamicTableModel<ConsoleViewEntry>([
             new DynamicTableColumn('timeStamp',1,50),
-            new DynamicTableColumn('level',1,50),
+            new DynamicTableColumn('level',1,50, new ConsoleViewEntryRenderer()),
             new DynamicTableColumn('logger',1,150),
             new DynamicTableColumn('message',1,500),
         ])

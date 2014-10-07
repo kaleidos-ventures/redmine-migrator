@@ -11,6 +11,7 @@ import com.taskadapter.redmineapi.bean.User
 import com.taskadapter.redmineapi.bean.Version
 import com.taskadapter.redmineapi.bean.WikiPage
 import com.taskadapter.redmineapi.bean.WikiPageDetail
+import com.taskadapter.redmineapi.RedmineManager.INCLUDE
 
 class RedmineClientImpl implements RedmineClient {
 
@@ -28,7 +29,10 @@ class RedmineClientImpl implements RedmineClient {
 
     @Override
     List<Issue> findAllIssueByProjectIdentifier(String identifier) {
-        return redmineManager.getIssues(project_id: identifier)
+        return redmineManager.getIssues(
+            project_id: identifier,
+            status_id: '*'
+        )
     }
 
     @Override
@@ -69,12 +73,18 @@ class RedmineClientImpl implements RedmineClient {
 
     @Override
     Issue findIssueById(Integer issueId) {
-        return redmineManager.getIssueById(issueId)
+        return redmineManager.getIssueById(
+            issueId,
+            INCLUDE.attachments,
+            INCLUDE.journals
+        )
     }
 
     @groovy.transform.Memoized
-    User findUserFullById(Integer userId){
-        return redmineManager.getUserById(userId)
+    User findUserFullById(Integer userId) {
+        // If there is no user it could be because the issue is assigned to a group
+        // that case we are assigning the issue to the current user
+        return redmineManager.getUserById(userId) ?: redmineManager.currentUser
     }
 
     @Override

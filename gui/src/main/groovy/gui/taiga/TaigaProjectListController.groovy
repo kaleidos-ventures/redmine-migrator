@@ -54,16 +54,22 @@ class TaigaProjectListController extends
 
     @Override
     void handleView(ViewContainer view, ActionEvent event) {
-        def settings = new SettingsService().loadSettings()
-        def taigaClient =
-            new TaigaClient(settings.taigaUrl)
-                .authenticate(
-                    settings.taigaUsername,
-                    settings.taigaPassword
-                )
+        def service = new SettingsService()
+        def settings = service.loadSettings()
+        def areUp = service.areServicesUp(settings.taigaUrl)
+
+        if (areUp) {
+            def taigaClient =
+                new TaigaClient(settings.taigaUrl)
+                    .authenticate(
+                        settings.taigaUsername,
+                        settings.taigaPassword
+                    )
 
 
-        publish(taigaClient.projects)
+            publish(taigaClient.projects)
+        }
+
     }
 
     @Override
@@ -73,12 +79,12 @@ class TaigaProjectListController extends
             .model
             .addAll(chunks.flatten())
 
-        view.rootPane.glassPane.visible = false
     }
 
     @Override
     void postHandlingView(ViewContainer viewContainer, ActionEvent event) {
         def rows = taigaProjectListView.model.rowCount
+        viewContainer.rootPane.glassPane.visible = false
 
         if (!rows) {
             updateStatus("No Taiga projects found", 0)

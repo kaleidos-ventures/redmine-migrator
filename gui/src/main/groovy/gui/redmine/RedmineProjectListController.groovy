@@ -25,23 +25,20 @@ import com.taskadapter.redmineapi.bean.Project
 
 import gui.exception.ExceptionView
 import gui.settings.SettingsService
-import gui.controller.DefaultViewControllerWorker
+import gui.controller.DefaultActionViewControllerWorker
 
-class ListProjectController extends
-    DefaultViewControllerWorker<ActionListener, ActionEvent, String, Project> {
+import groovy.util.logging.Log4j
 
-    @Override
-    Class<ActionListener> getSupportedClass() {
-        return ActionListener
-    }
+@Log4j
+class RedmineProjectListController extends DefaultActionViewControllerWorker<Project> {
 
     @Override
     void preHandlingView(ViewContainer view, ActionEvent event) {
         updateStatus("Loading list...", 50)
-        def projectsView = getProjectListView()
+        def projectsView = getRedmineProjectListView()
 
         if (!projectsView) {
-            projectsView = new ProjectListView()
+            projectsView = new RedmineProjectListView()
             viewManager.addView(projectsView , PerspectiveConstraint.RIGHT)
         }
 
@@ -49,31 +46,35 @@ class ListProjectController extends
         view.rootPane.glassPane.visible = true
     }
 
-    ViewContainer getProjectListView() {
-        return locate(ProjectListView).named(ProjectListView.ID)
+    ViewContainer getRedmineProjectListView() {
+        return locate(RedmineProjectListView).named(RedmineProjectListView.ID)
     }
 
     @Override
     void handleView(ViewContainer view, ActionEvent event) {
-        def settings = new SettingsService().loadSettings()
-        def redmineManager =
-            new RedmineManager(
-                settings.redmineUrl,
-                settings.redmineApiKey)
+        def service = new SettingsService()
+        def settings = service.loadSettings()
+        def areUp = service.areServicesUp(settings.redmineUrl)
 
-        publish(redmineManager.projects)
+        if (areUp) {
+            def redmineManager =
+                new RedmineManager(
+                    settings.redmineUrl,
+                    settings.redmineApiKey)
+
+            publish(redmineManager.projects)
+        }
     }
 
     @Override
     void handleViewPublising(ViewContainer view, ActionEvent event, List<Project> chunks) {
-        projectListView.model.addAll(chunks.flatten())
-
-        view.rootPane.glassPane.visible = false
+        redmineProjectListView.model.addAll(chunks.flatten())
     }
 
     @Override
     void postHandlingView(ViewContainer viewContainer, ActionEvent event) {
-        def rows = projectListView.model.rowCount
+        viewContainer.rootPane.glassPane.visible = false
+        def rows = redmineProjectListView.model.rowCount
 
         if (!rows) {
             setMigrationButtonEnabled(false)
@@ -85,23 +86,29 @@ class ListProjectController extends
         updateStatus("Showing $rows Redmine projects ", 0)
     }
 
-    ProjectListView getProjectListView() {
-        locate(ProjectListView).named(ProjectListView.ID)
+    RedmineProjectListView getRedmineProjectListView() {
+        locate(RedmineProjectListView).named(RedmineProjectListView.ID)
     }
 
     void setMigrationButtonEnabled(boolean enabled) {
-        find(JButton)
-            .in(projectListView)
-            .named('migrateSelected')
-            .setEnabled(enabled)
+        migratedSelectedButton.setEnabled(enabled)
     }
 
     void updateStatus(String message, Integer progress) {
-        def progressBar = find(JProgressBar).in(viewManager.rootView).named(StatusBar.STATUS_BAR_NAME)
-        def label = find(JLabel).in(viewManager.rootView).named(StatusBar.LEFT_PANEL_LABEL)
+        statusBarProgressBar.value = progress
+        statusBarMessageLabel.text = message
+    }
 
-        progressBar.value = progress
-        label.text = message
+    JButton getMigratedSelectedButton() {
+        return find(JButton).in(redmineProjectListView).named('migrateSelected')
+    }
+
+    JProgressBar getStatusBarProgressBar() {
+       return find(JProgressBar).in(viewManager.rootView).named(StatusBar.STATUS_BAR_NAME)
+    }
+
+    JLabel getStatusBarMessageLabel() {
+        return find(JLabel).in(viewManager.rootView).named(StatusBar.LEFT_PANEL_LABEL)
     }
 
 }
