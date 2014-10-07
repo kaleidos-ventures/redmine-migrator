@@ -26,7 +26,9 @@ import com.taskadapter.redmineapi.bean.Project
 import gui.exception.ExceptionView
 import gui.settings.SettingsService
 import gui.controller.DefaultViewControllerWorker
+import groovy.util.logging.Log4j
 
+@Log4j
 class ListProjectController extends
     DefaultViewControllerWorker<ActionListener, ActionEvent, String, Project> {
 
@@ -55,24 +57,28 @@ class ListProjectController extends
 
     @Override
     void handleView(ViewContainer view, ActionEvent event) {
-        def settings = new SettingsService().loadSettings()
-        def redmineManager =
-            new RedmineManager(
-                settings.redmineUrl,
-                settings.redmineApiKey)
+        def service = new SettingsService()
+        def settings = service.loadSettings()
+        def areUp = service.areServicesUp(settings.redmineUrl)
 
-        publish(redmineManager.projects)
+        if (areUp) {
+            def redmineManager =
+                new RedmineManager(
+                    settings.redmineUrl,
+                    settings.redmineApiKey)
+
+            publish(redmineManager.projects)
+        }
     }
 
     @Override
     void handleViewPublising(ViewContainer view, ActionEvent event, List<Project> chunks) {
         projectListView.model.addAll(chunks.flatten())
-
-        view.rootPane.glassPane.visible = false
     }
 
     @Override
     void postHandlingView(ViewContainer viewContainer, ActionEvent event) {
+        viewContainer.rootPane.glassPane.visible = false
         def rows = projectListView.model.rowCount
 
         if (!rows) {
