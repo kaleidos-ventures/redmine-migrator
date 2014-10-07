@@ -40,7 +40,14 @@ class RedmineMigrationController extends DefaultActionViewControllerWorker<Migra
     void handleView(ViewContainer view, ActionEvent event) {
         def selectedProjectList = view.model.selectedObjects
         def total = selectedProjectList.size()
-        def settings = new SettingsService().loadSettings()
+        def service = new SettingsService()
+        def settings = service.loadSettings()
+
+        if (!service.areServicesUp(settings.redmineUrl, settings.taigaUrl)) {
+            publishFailure(new Exception("Please check your connections!!"))
+            return
+        }
+
         def migrator = buildMigratorWithSettings(settings)
 
         try {

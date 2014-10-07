@@ -56,7 +56,12 @@ class SettingsService {
                 log.debug("Checking ${host}")
 
                 def address = InetAddress.getByName(host)
-                def reachable = address.isReachable(5000)
+                def reachable = address.isReachable(3000)
+
+                if(!reachable) {
+                    // awful race condition
+                    Thread.sleep(3000)
+                }
 
                 if (reachable) {
                     log.debug("Service ${host} seems to be up and running")
