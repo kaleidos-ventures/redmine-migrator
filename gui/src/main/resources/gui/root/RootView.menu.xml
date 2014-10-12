@@ -1,37 +1,33 @@
 <menuBar>
     <projects text="Projects">
-        <taiga
-            text="Taiga projects"
-            enableToolButtonText="false" 
-            toolBarGroup="3"
-            keyStroke="CTRL_T"
-            icon="gui/img/taiga.png"/>
+        
         <redmine
             text="Redmine projects"
             enableToolButtonText="false" 
-            toolBarGroup="3"
+            toolBarGroup="1"
             keyStroke="CTRL_R"
             icon="gui/img/redmine.png"/>
+        <taiga
+            text="Taiga projects"
+            enableToolButtonText="false" 
+            icon="gui/img/taiga.png"/>
         <separator/>
         <settings
             text="Settings"
             enableToolButtonText="false" 
-            toolBarGroup="2"
+            toolBarGroup="1"
             keyStroke="CTRL_S"
             icon="org/viewaframework/widget/icon/fan/img/server/server_connect.png"/>
         <separator/>
         <exit 
             name="exit"
-            toolBarGroup="1"
             enableToolButtonText="false" 
             icon="org/viewaframework/widget/icon/fan/img/door/door_in.png"
             keyStroke="CTRL_X"/>
-        
-
     </projects>
     <about text="About">
         <aboutTaiga
-            toolBarGroup="4"
+            toolBarGroup="2"
             enableToolButtonText="false" 
             icon="org/viewaframework/widget/icon/fan/img/misc/help.png"
             keyStroke="CTRL_I"/>
