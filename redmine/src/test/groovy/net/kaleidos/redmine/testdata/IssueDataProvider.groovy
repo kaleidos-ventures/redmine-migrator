@@ -13,10 +13,19 @@ import com.taskadapter.redmineapi.bean.Attachment as RedmineAttachment
 import com.taskadapter.redmineapi.bean.IssueStatus as RedmineIssueStatus
 import com.taskadapter.redmineapi.bean.IssuePriority as RedmineIssuePriority
 
+import com.taskadapter.redmineapi.internal.Transport.Pagination
+
 class IssueDataProvider {
 
-    List<RedmineIssue> buildRedmineIssueList() {
-        return (1..10).collect(this.&buildRedmineIssueWithIndex)
+    Iterator<RedmineIssue> buildRedmineIssueList() {
+        return (1..10)
+            .collect(this.&buildRedmineIssueWithIndex)
+            .collect(this.&buildPagination)
+            .iterator()
+    }
+
+    Pagination<RedmineIssue> buildPagination(RedmineIssue issue) {
+       return new Pagination(total:10, limit:1, offset:1, list: [issue])
     }
 
     RedmineIssue buildRedmineIssueWithIndex(Integer index) {

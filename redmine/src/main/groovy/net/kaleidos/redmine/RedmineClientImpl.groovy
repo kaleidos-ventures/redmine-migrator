@@ -28,8 +28,8 @@ class RedmineClientImpl implements RedmineClient {
     }
 
     @Override
-    List<Issue> findAllIssueByProjectIdentifier(String identifier) {
-        return redmineManager.getIssues(
+    Iterator<Issue> findAllIssueByProjectIdentifier(String identifier) {
+        return redmineManager.getIssueIterator(
             project_id: identifier,
             status_id: '*'
         )

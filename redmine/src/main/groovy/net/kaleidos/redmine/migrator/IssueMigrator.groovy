@@ -4,8 +4,11 @@ import com.taskadapter.redmineapi.bean.Attachment as RedmineAttachment
 import com.taskadapter.redmineapi.bean.Issue as RedmineIssue
 import com.taskadapter.redmineapi.bean.Journal as RedmineHistory
 import com.taskadapter.redmineapi.bean.User as RedmineUser
-import groovy.transform.InheritConstructors
+import com.taskadapter.redmineapi.internal.Transport.Pagination
+
 import groovy.util.logging.Log4j
+import groovy.transform.InheritConstructors
+
 import net.kaleidos.domain.Attachment as TaigaAttachment
 import net.kaleidos.domain.History as TaigaHistory
 import net.kaleidos.domain.Issue as TaigaIssue
@@ -19,16 +22,29 @@ class IssueMigrator extends AbstractMigrator<TaigaIssue> {
 
     final String SEVERITY_NORMAL = 'Normal'
 
-    List<TaigaIssue> migrateIssuesByProject(final RedmineTaigaRef ref) {
-        def issueList =
+    List<TaigaIssue> migrateIssuesByProject(final RedmineTaigaRef ref, Closure<Void> feedback = {}) {
+        Iterator<Pagination<TaigaIssue>> issueIterator =
             redmineClient.findAllIssueByProjectIdentifier(ref.redmineIdentifier)
 
-        log.debug("Migrating ${issueList.size()} issues from Redmine project ${ref.redmineIdentifier}")
+        Closure<Boolean> thereIsNext = { Pagination pagination -> pagination.list }
+        Closure<Void> keepPosted = { Pagination p->
+            feedback("Processing issues ${p.offset}-${p.offset + p.list.size()} / ${p.total}")
+        }
 
-        return issueList
-            .collect(this.&populateIssue)
-            .collect(this.&addRedmineIssueToTaigaProject.rcurry(ref.project))
-            .collect(this.&save)
+        log.debug("Migrating issues from Redmine project ${ref.redmineIdentifier}")
+
+        return issueIterator
+            .takeWhile(thereIsNext) // issueIterator is an infinite stream
+            .collect { Pagination pagination ->
+                pagination.with(keepPosted) // keeping the UI informed
+                pagination
+                    .list
+                    .collect(
+                        this.&populateIssue >>
+                        this.&addRedmineIssueToTaigaProject.rcurry(ref.project) >>
+                        this.&save)
+            }
+            .flatten() // return all processed issues
     }
 
     RedmineIssue populateIssue(final RedmineIssue basicIssue) {
