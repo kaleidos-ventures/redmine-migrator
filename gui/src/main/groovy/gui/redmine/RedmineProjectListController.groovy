@@ -86,10 +86,6 @@ class RedmineProjectListController extends DefaultActionViewControllerWorker<Pro
         updateStatus("Showing $rows Redmine projects ", 0)
     }
 
-    RedmineProjectListView getRedmineProjectListView() {
-        locate(RedmineProjectListView).named(RedmineProjectListView.ID)
-    }
-
     void setMigrationButtonEnabled(boolean enabled) {
         migratedSelectedButton.setEnabled(enabled)
     }

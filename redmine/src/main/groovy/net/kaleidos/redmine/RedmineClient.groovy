@@ -35,7 +35,7 @@ interface RedmineClient {
     /**
      * find all basic issues info from the project passed as parameter
      **/
-    List<Issue> findAllIssueByProjectIdentifier(String identifier)
+    Iterator<Issue> findAllIssueByProjectIdentifier(String identifier)
 
     /**
      * find all possible issue statuses info from the configured redmine instance

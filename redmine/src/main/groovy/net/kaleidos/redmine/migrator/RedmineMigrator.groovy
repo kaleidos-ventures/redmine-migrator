@@ -38,7 +38,7 @@ class RedmineMigrator {
                 log.debug "Migrating issues from ${ref.redmineIdentifier}"
 
                 progressCallBack("Migrating issues")
-                issueMigrator.migrateIssuesByProject(ref)
+                issueMigrator.migrateIssuesByProject(ref,progressCallBack)
 
                 log.debug "Migrating wikipages from ${ref.redmineIdentifier}"
 

@@ -9,6 +9,9 @@ import com.taskadapter.redmineapi.bean.Tracker
 import com.taskadapter.redmineapi.bean.User
 import com.taskadapter.redmineapi.bean.Version
 import com.taskadapter.redmineapi.bean.WikiPage
+
+import com.taskadapter.redmineapi.internal.Transport.Pagination
+
 import spock.lang.Specification
 
 class RedmineClientImplSpec extends Specification {
@@ -55,8 +58,13 @@ class RedmineClientImplSpec extends Specification {
         given: 'a project from redmine'
             Project project = client.findAllProject().first()
         when: 'trying to get all basic issue info from a given project'
-            List<Issue> issueList =
+            Iterator<Pagination<Issue>> issueIterator =
                 client.findAllIssueByProjectIdentifier(project.identifier)
+            List<Issue> issueList =
+                issueIterator
+                    .takeWhile { it.list }
+                    .collect { it.list }
+                    .flatten()
         then: 'the list shouldnt be empty'
             issueList.size() > 0
         and: 'the content should be the expected'
@@ -143,11 +151,16 @@ class RedmineClientImplSpec extends Specification {
         given: 'a list of available projects'
             List<Project> allAvailableProjects = client.findAllProject()
         when: 'getting all issues'
-            List<Issue> issueList =
+            Iterator<Pagination<Issue>> issueIterator =
                 client.findAllIssueByProjectIdentifier(
                     allAvailableProjects
                         .first()
                         .identifier)
+            List<Issue> issueList =
+                issueIterator
+                    .takeWhile { it.list }
+                    .collect { it.list }
+                    .flatten()
         and: 'getting specific info of one of them'
             Issue issue =
                 client.findIssueById(issueList.first().id)
