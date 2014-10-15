@@ -4,8 +4,6 @@ import static org.viewaframework.util.ComponentFinder.find
 
 import javax.swing.*
 import java.awt.event.ActionEvent
-import java.awt.event.ActionListener
-
 import groovy.util.logging.Log4j
 
 import org.viewaframework.view.*
@@ -33,15 +31,22 @@ class RedmineMigrationController extends DefaultActionViewControllerWorker<Migra
 
     @Override
     void preHandlingView(ViewContainer view, ActionEvent event) {
+        viewManager.removeView(view)
         viewManager.addView(new MigrationProgressView())
     }
 
     @Override
     void handleView(ViewContainer view, ActionEvent event) {
-        def selectedProjectList = view.model.selectedObjects
+        log.debug("Getting selected objects")
+        def selectedProjectList =
+            locate(RedmineProjectListView.ID)
+                .model
+                .selectedObjects
         def total = selectedProjectList.size()
         def service = new SettingsService()
         def settings = service.loadSettings()
+
+        log.debug("Migrating $total projects")
 
         if (!service.areServicesUp(settings.redmineUrl, settings.taigaUrl)) {
             publishFailure(new Exception("Please check your connections!!"))

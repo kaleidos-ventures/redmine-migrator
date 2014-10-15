@@ -9,7 +9,7 @@ import org.viewaframework.widget.view.ui.*
 import org.viewaframework.view.DefaultViewContainer
 
 @Controllers([
-    @Controller(type=RedmineMigrationController,pattern='migrateSelected'),
+    @Controller(type=RedmineMigrationWarningController,pattern='migrateSelected'),
     @Controller(type=RedmineProjectListController,pattern='refresh')
 ])
 class RedmineProjectListView extends MasterView<Project> {

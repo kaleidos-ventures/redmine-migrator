@@ -1,4 +1,4 @@
-package gui.taiga
+package gui.redmine
 
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
@@ -6,10 +6,10 @@ import java.awt.event.ActionListener
 import gui.controller.*
 import org.viewaframework.controller.*
 
-class TaigaProjectDeletionWarningController extends AbstractOpenerController<ActionListener,ActionEvent> {
+class RedmineMigrationWarningController extends AbstractOpenerController<ActionListener,ActionEvent> {
 
-    TaigaProjectDeletionWarningController() {
-       super(new DeleteTaigaProjectWarningView())
+    RedmineMigrationWarningController() {
+       super(new RedmineMigrationWarningView())
     }
 
     Class<ActionListener> getSupportedClass() {

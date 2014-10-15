@@ -5,7 +5,6 @@ import static org.viewaframework.util.ComponentFinder.find
 import org.jdesktop.swingx.JXList
 
 import java.awt.event.ActionEvent
-import java.awt.event.ActionListener
 
 import javax.swing.JLabel
 import javax.swing.JButton
@@ -25,7 +24,7 @@ import gui.settings.SettingsService
 import gui.exception.ExceptionView
 import gui.migration.MigrationProgress
 import gui.migration.MigrationProgressView
-import gui.controller.DefaultViewControllerWorker
+import gui.controller.DefaultActionViewControllerWorker
 
 import groovy.util.logging.Log4j
 
@@ -33,13 +32,7 @@ import net.kaleidos.domain.Project
 import net.kaleidos.taiga.TaigaClient
 
 @Log4j
-class DeleteTaigaProjectController extends
-    DefaultViewControllerWorker<ActionListener, ActionEvent, String, Project> {
-
-    @Override
-    Class<ActionListener> getSupportedClass() {
-        return ActionListener
-    }
+class DeleteTaigaProjectController extends DefaultActionViewControllerWorker<Project> {
 
     @Override
     void preHandlingView(ViewContainer view, ActionEvent event) {

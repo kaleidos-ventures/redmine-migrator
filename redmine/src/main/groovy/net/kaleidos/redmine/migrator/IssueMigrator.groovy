@@ -76,7 +76,7 @@ class IssueMigrator extends AbstractMigrator<TaigaIssue> {
     }
 
     List<TaigaAttachment> extractIssueAttachments(final RedmineIssue issue) {
-        log.debug("Adding ${issue.attachments.size()} attacments to issue ${issue.subject}")
+        log.debug("Adding ${issue.attachments.size()} attachments to issue ${issue.subject}")
 
         def attachments =
             issue
