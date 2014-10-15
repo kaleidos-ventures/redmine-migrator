@@ -7,6 +7,7 @@ import net.kaleidos.redmine.testdata.ProjectDataProvider
 
 import net.kaleidos.redmine.RedmineTaigaRef
 import net.kaleidos.redmine.MigratorToTaigaSpecBase
+import net.kaleidos.redmine.RedmineFileDownloader
 import net.kaleidos.redmine.testdata.ProjectDataProvider
 
 import net.kaleidos.taiga.TaigaClient
@@ -15,6 +16,7 @@ import net.kaleidos.redmine.RedmineClient
 import net.kaleidos.domain.Issue as TaigaIssue
 import net.kaleidos.domain.History as TaigaHistory
 import net.kaleidos.domain.Attachment as TaigaAttachment
+import com.taskadapter.redmineapi.bean.Attachment as RedmineAttachment
 
 class IssueMigratorSpec extends MigratorToTaigaSpecBase {
 
@@ -78,6 +80,10 @@ class IssueMigratorSpec extends MigratorToTaigaSpecBase {
                 redmineIssue.attachments = buildAttachmentList()
                 redmineIssue.journals = buildHistoryList()
                 redmineIssue
+            }
+            downloadAttachment(_) >> { RedmineAttachment att ->
+                return new RedmineFileDownloader("apiKey002ifj03ifj")
+                    .download(att.contentURL)
             }
         }
     }

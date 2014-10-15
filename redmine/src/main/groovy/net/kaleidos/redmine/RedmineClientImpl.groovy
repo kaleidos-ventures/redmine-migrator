@@ -12,10 +12,12 @@ import com.taskadapter.redmineapi.bean.Version
 import com.taskadapter.redmineapi.bean.WikiPage
 import com.taskadapter.redmineapi.bean.WikiPageDetail
 import com.taskadapter.redmineapi.RedmineManager.INCLUDE
+import com.taskadapter.redmineapi.bean.Attachment
 
 class RedmineClientImpl implements RedmineClient {
 
-    private RedmineManager redmineManager
+    RedmineManager redmineManager
+    RedmineFileDownloader redmineFileDownloader
 
     @Override
     List<Project> findAllProject() {
@@ -90,5 +92,9 @@ class RedmineClientImpl implements RedmineClient {
     @Override
     List<Version> findAllVersionByProjectId(Integer projectId) {
         return redmineManager.getVersions(projectId)
+    }
+
+    byte[] downloadAttachment(Attachment attachment) {
+        return redmineFileDownloader.download(attachment.contentURL)
     }
 }

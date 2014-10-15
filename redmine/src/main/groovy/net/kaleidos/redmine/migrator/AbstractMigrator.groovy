@@ -41,9 +41,10 @@ abstract class AbstractMigrator<A> implements Migrator<A> {
 
     TaigaAttachment convertToTaigaAttachment(RedmineAttachment att) {
         RedmineUser user = redmineClient.findUserFullById(att.author.id)
+        byte[] attachmentData = redmineClient.downloadAttachment(att)
 
         return new TaigaAttachment(
-            data: new URL(att.contentURL).bytes.encodeBase64(),
+            data: attachmentData.encodeBase64(),
             name: att.fileName,
             description: att.description,
             createdDate: att.createdOn,

@@ -5,6 +5,7 @@ import com.taskadapter.redmineapi.bean.WikiPageDetail as RedmineWikiPageDetail
 import groovy.transform.InheritConstructors
 import groovy.util.logging.Log4j
 import net.kaleidos.domain.Wikipage as TaigaWikiPage
+import net.kaleidos.domain.Attachment as TaigaAttachment
 import net.kaleidos.redmine.RedmineTaigaRef
 
 @Log4j
@@ -32,8 +33,21 @@ class WikiMigrator extends AbstractMigrator<TaigaWikiPage> {
         return new TaigaWikiPage(
             slug: slugify(redmineWikiPage.title),
             content: redmineWikiPage.text,
-            project: redmineTaigaRef.project
+            project: redmineTaigaRef.project,
+            attachments: extractWikiAttachments(redmineWikiPage)
         )
+    }
+
+    List<TaigaAttachment> extractWikiAttachments(final RedmineWikiPage wiki) {
+        log.debug("Adding ${wiki.attachments?.size()} attachments to wiki ${wiki.title}")
+
+        def attachments =
+            wiki
+                .attachments
+                .collect(executeSafelyAndWarn(this.&convertToTaigaAttachment))
+                .findAll { it } // TODO replace with findResults
+
+        return attachments
     }
 
     RedmineWikiPageDetail getCompleteRedmineWikiPageFrom(

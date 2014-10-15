@@ -10,6 +10,7 @@ import com.taskadapter.redmineapi.bean.User
 import com.taskadapter.redmineapi.bean.Version
 import com.taskadapter.redmineapi.bean.WikiPage
 import com.taskadapter.redmineapi.bean.WikiPageDetail
+import com.taskadapter.redmineapi.bean.Attachment
 
 /**
  * This interface exposes all public Redmine methods needed by the migrator.
@@ -81,5 +82,10 @@ interface RedmineClient {
      * Find all versions of a given project
      */
     List<Version> findAllVersionByProjectId(Integer projectId)
+
+    /**
+     * Downloads attachments by their contentURL
+     */
+    byte[] downloadAttachment(Attachment attachment)
 
 }
