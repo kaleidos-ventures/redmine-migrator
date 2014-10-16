@@ -4,7 +4,7 @@
         toolBarGroup="1"
         enabled="false"
         enableToolButtonText="true" 
-        icon="org/viewaframework/widget/icon/fan/img/page/page_delete.png"/>
+        icon="org/viewaframework/widget/icon/fan/img/bin/bin_closed.png"/>
     <refresh
         name="refresh" 
         text="Refresh list..." 
