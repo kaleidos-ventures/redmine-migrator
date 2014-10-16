@@ -55,9 +55,6 @@ class IssueMigrator extends AbstractMigrator<TaigaIssue> {
         final RedmineIssue source,
         final TaigaProject taigaProject) {
 
-        RedmineUser user =
-            redmineClient.findUserFullById(source.author.id)
-
         return new TaigaIssue(
             ref: source.id,
             project: taigaProject,
@@ -68,11 +65,16 @@ class IssueMigrator extends AbstractMigrator<TaigaIssue> {
             subject: source.subject,
             description: source.with { description ?: subject },
             createdDate: source.createdOn,
-            owner: user.mail,
+            owner: getUserMail(source.author),
+            assignedTo: getUserMail(source.assignee),
             attachments: extractIssueAttachments(source),
             history: extractIssueHistory(source)
         )
 
+    }
+
+    private String getUserMail(RedmineUser user) {
+        return user ? redmineClient.findUserFullById(user.id).mail : null
     }
 
     List<TaigaAttachment> extractIssueAttachments(final RedmineIssue issue) {
