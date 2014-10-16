@@ -87,28 +87,6 @@ class IssueMigrator extends AbstractMigrator<TaigaIssue> {
         return attachments
     }
 
-    def executeSafelyAndWarn = { action ->
-        return { source ->
-            try {
-                action(source)
-            } catch(Throwable e) {
-                log.warn(e.message)
-            }
-        }
-    }
-
-    TaigaAttachment convertToTaigaAttachment(RedmineAttachment att) {
-        RedmineUser user = redmineClient.findUserFullById(att.author.id)
-
-        return new TaigaAttachment(
-            data: new URL(att.contentURL).bytes.encodeBase64(),
-            name: att.fileName,
-            description: att.description,
-            createdDate: att.createdOn,
-            owner: user.mail
-        )
-
-    }
 
     List<TaigaHistory> extractIssueHistory(final RedmineIssue issue) {
         //We are only interested in migrating those historic entries
@@ -120,20 +98,6 @@ class IssueMigrator extends AbstractMigrator<TaigaIssue> {
                 .collect(this.&convertToTaigaHistory)
 
         return comments
-    }
-
-    TaigaHistory convertToTaigaHistory(RedmineHistory journal) {
-        RedmineUser redmineUser = redmineClient.findUserFullById(journal.user.id)
-        TaigaUser taigaUser =
-            new TaigaUser(
-                name: redmineUser.fullName,
-                email: redmineUser.mail)
-
-        return new TaigaHistory(
-            user: taigaUser,
-            createdAt: journal.createdOn,
-            comment: journal.notes
-        )
     }
 
     @Override

@@ -59,4 +59,26 @@ class WikiMigratorSpec extends MigratorToTaigaSpecBase {
         }
     }
 
+    def 'check how works header fixator'() {
+        given: 'a wiki text with headers in form h1.'
+            def wikiContent = """
+                h1.header1
+                h2.header2
+                h3.header3
+                h4.header4
+                h5.header5
+            """
+        when: 'applying fix'
+            def result =
+                new WikiMigrator(null, null)
+                    .fixContentHeaders(wikiContent)
+        then: 'headers should have changed'
+            result.contains("#header1")
+            result.contains("##header2")
+            result.contains("###header3")
+            result.contains("####header4")
+            result.contains("#####header5")
+
+    }
+
 }

@@ -6,6 +6,7 @@ final class RedmineClientFactory {
 
     public static RedmineClient newInstance(String host, String apiKey) {
         return new RedmineClientImpl(
+            redmineFileDownloader: new RedmineFileDownloader(apiKey),
             redmineManager: RedmineManagerFactory.createWithApiKey(host, apiKey)
         )
     }
