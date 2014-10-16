@@ -32,10 +32,14 @@ class WikiMigrator extends AbstractMigrator<TaigaWikiPage> {
 
         return new TaigaWikiPage(
             slug: slugify(redmineWikiPage.title),
-            content: redmineWikiPage.text,
+            content: fixContentHeaders(redmineWikiPage.text),
             project: redmineTaigaRef.project,
             attachments: extractWikiAttachments(redmineWikiPage)
         )
+    }
+
+    String fixContentHeaders(String content) {
+        return (1..5).inject(content) { acc , n -> acc.replaceAll("h${n}.", ("#" * n)) }
     }
 
     List<TaigaAttachment> extractWikiAttachments(final RedmineWikiPage wiki) {
