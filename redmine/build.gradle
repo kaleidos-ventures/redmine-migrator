@@ -21,7 +21,6 @@ dependencies {
         exclude module: 'groovy-all'
     }
 
-    compile 'com.github.slugify:slugify:2.1.2'
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
 }
 

@@ -31,7 +31,7 @@ class WikiMigrator extends AbstractMigrator<TaigaWikiPage> {
         log.debug("Building taiga wiki page: '${redmineWikiPage.title}'")
 
         return new TaigaWikiPage(
-            slug: slugify(redmineWikiPage.title),
+            slug: redmineWikiPage.title,
             content: fixContentHeaders(redmineWikiPage.text),
             project: redmineTaigaRef.project,
             attachments: extractWikiAttachments(redmineWikiPage)
