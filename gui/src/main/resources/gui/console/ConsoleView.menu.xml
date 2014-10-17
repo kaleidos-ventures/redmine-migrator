@@ -3,7 +3,11 @@
         text="Clear log"
         enableToolButtonText="false" 
         toolBarGroup="1"
-        keyStroke="CTRL_C"
         icon="org/viewaframework/widget/icon/fan/img/bin/bin_closed.png"/>
+    <saveLog
+        text="Export to CSV"
+        enableToolButtonText="false" 
+        toolBarGroup="1"
+        icon="org/viewaframework/widget/icon/fan/img/page/page_white_excel.png"/>
 </menuBar>
 
