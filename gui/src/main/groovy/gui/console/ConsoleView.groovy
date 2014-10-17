@@ -10,13 +10,15 @@ import org.viewaframework.view.DefaultViewContainer
     @Listener(id='consoleID',type=ConsoleViewListener)
 ])
 @Controllers([
-    @Controller(type=ConsoleClearLogController, pattern='clearLog')
+    @Controller(type=ConsoleClearWarningViewController, pattern='clearLog')
 ])
 class ConsoleView extends DefaultViewContainer {
 
+    static final String ID = "consoleViewID"
+
     ConsoleView() {
         super(
-            "console",
+            ID,
             "Console View",
             new ConsoleViewPanel().initComponents()
         )
