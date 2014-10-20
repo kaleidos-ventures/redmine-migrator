@@ -10,7 +10,8 @@ import org.viewaframework.view.DefaultViewContainer
     @Listener(id='consoleID',type=ConsoleViewListener)
 ])
 @Controllers([
-    @Controller(type=ConsoleClearWarningViewController, pattern='clearLog')
+    @Controller(type=ConsoleClearWarningViewController, pattern='clearLog'),
+    @Controller(type=ConsoleSaveLogWarningViewController, pattern='saveLog')
 ])
 class ConsoleView extends DefaultViewContainer {
 
