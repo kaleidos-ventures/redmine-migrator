@@ -14,7 +14,8 @@ import gui.controller.CloseViewController
 import gui.controller.GlassPaneAwareListener
 
 @Controllers([
-    @Controller(type=CloseViewController,pattern='cancelButton')
+    @Controller(type=CloseViewController,pattern='cancelButton'),
+    @Controller(type=ConsoleSaveLogController,pattern='acceptButton')
 ])
 @Listeners([
     @Listener(id="consoleSaveLogWarningListenerID", type=GlassPaneAwareListener)
