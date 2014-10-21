@@ -53,6 +53,7 @@ class IssueMigratorSpec extends MigratorToTaigaSpecBase {
             firstTaigaIssue.subject.contains('Integration')
             firstTaigaIssue.description
             firstTaigaIssue.owner
+            firstTaigaIssue.assignedTo
             firstTaigaIssue.createdDate
         and: 'checking attachments'
             firstIssueAttachment.data

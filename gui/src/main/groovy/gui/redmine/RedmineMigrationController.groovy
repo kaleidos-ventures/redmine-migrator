@@ -20,20 +20,14 @@ import gui.settings.SettingsService
 import gui.swingx.JXBusyFeedbackLabel
 import gui.migration.MigrationProgress
 import gui.migration.MigrationProgressView
-import gui.controller.DefaultActionViewControllerWorker
+import gui.controller.MigrationProgressAwareController
 
 import net.kaleidos.taiga.TaigaClient
 import net.kaleidos.redmine.RedmineClientFactory
 import net.kaleidos.redmine.migrator.RedmineMigrator
 
 @Log4j
-class RedmineMigrationController extends DefaultActionViewControllerWorker<MigrationProgress> {
-
-    @Override
-    void preHandlingView(ViewContainer view, ActionEvent event) {
-        viewManager.removeView(view)
-        viewManager.addView(new MigrationProgressView())
-    }
+class RedmineMigrationController extends MigrationProgressAwareController {
 
     @Override
     void handleView(ViewContainer view, ActionEvent event) {
@@ -72,48 +66,6 @@ class RedmineMigrationController extends DefaultActionViewControllerWorker<Migra
 
     }
 
-    @Override
-    void handleViewPublising(ViewContainer view, ActionEvent event, List<MigrationProgress> chunks) {
-        MigrationProgress migrationProgress = chunks.first()
-        setProgressFeedback(migrationProgress)
-
-        if (migrationProgress.exception) {
-            log.error("Exception while migrating: ${migrationProgress.exception.message}")
-            busyLabel.setFailure()
-            return
-        }
-
-        if (migrationProgress.progress >= 1) {
-            busyLabel.setSuccess()
-            return
-        }
-
-    }
-
-    @Override
-    void postHandlingView(ViewContainer view, ActionEvent event) {
-        closeButton.enabled = true
-    }
-
-    void publishSuccess() {
-        publish(
-            new MigrationProgress(
-                message:"Migration Finished Successfully",
-                progress:1.0
-            )
-        )
-    }
-
-    void publishFailure(Throwable th) {
-        publish(
-            new MigrationProgress(
-                exception: th,
-                message: "Migration Failed!!! Please check log",
-                progress: 1.0
-            )
-        )
-    }
-
     RedmineMigrator buildMigratorWithSettings(Settings settings) {
         def redmineClient =
             RedmineClientFactory.newInstance(
@@ -140,37 +92,12 @@ class RedmineMigrationController extends DefaultActionViewControllerWorker<Migra
         }
     }
 
-    void setProgressFeedback(MigrationProgress migrationProgress) {
-        progressMessageLabel.text = buildMessage(migrationProgress)
-        migrationProgressBar.setValue((migrationProgress.progress * 100).intValue())
-    }
-
     String buildMessage(MigrationProgress migrationProgress) {
         if (!migrationProgress.projectName) {
             return migrationProgress.message
         }
 
         return "${migrationProgress.projectName} : ${migrationProgress.message}"
-    }
-
-    JXBusyFeedbackLabel getBusyLabel() {
-        return find(JXBusyFeedbackLabel).in(progressView).named('outputIconLabel')
-    }
-
-    JButton getCloseButton() {
-        return find(JButton).in(progressView).named('closeButton')
-    }
-
-    JProgressBar getMigrationProgressBar() {
-        return find(JProgressBar).in(progressView).named('migrationProgressBar')
-    }
-
-    JLabel getProgressMessageLabel() {
-        return find(JLabel).in(progressView).named('loggingProgress')
-    }
-
-    MigrationProgressView getProgressView() {
-        return locate(MigrationProgressView).named(MigrationProgressView.ID)
     }
 
 }

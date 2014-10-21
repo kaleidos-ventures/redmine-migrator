@@ -15,13 +15,12 @@ dependencies {
     compile 'log4j:log4j:1.2.17'
 
     compile 'com.taskadapter:redmine-java-api:1.26-SNAPSHOT'
-    compile('net.kaleidos:taiga-importer-api-client:1.0.1') {
+    compile('net.kaleidos:taiga-importer-api-client:1.3.0') {
         exclude module: 'log4j'
         exclude module: 'groovy'
         exclude module: 'groovy-all'
     }
 
-    compile 'com.github.slugify:slugify:2.1.2'
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
 }
 

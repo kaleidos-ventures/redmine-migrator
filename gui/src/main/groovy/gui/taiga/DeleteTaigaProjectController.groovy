@@ -67,7 +67,7 @@ class DeleteTaigaProjectController extends DefaultActionViewControllerWorker<Pro
                     settings.taigaPassword)
 
         try {
-            selectedProjectList.eachWithIndex { Map p, index ->
+            selectedProjectList.eachWithIndex { Project p, index ->
                 log.debug("deleting ${p.name}")
                 publish(
                     new MigrationProgress(
