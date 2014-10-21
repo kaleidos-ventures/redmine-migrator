@@ -1,0 +1,12 @@
+== Download & Execution
+
+First of all you need to download the Redmine to Taiga migrator. Please download the lastest version of https://bintray.com/kaleidos/maven/redmine-to-taiga/view/general[the migrator^]. As a dependency you only need Java in your system.
+
+Now just execute:
+
+[source, bash]
+----
+java -jar redmine-migrator-<version>.jar
+----
+
+image::main.png[title="Main window", align="center"]

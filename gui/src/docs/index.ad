@@ -1,0 +1,28 @@
+= Redmine to Taiga migrator
+:linkcss:
+:imagesdir: img
+by Taiga
+:numbered:
+:testDir: ../test/groovy
+:sourceDir: ../main/groovy
+
+<<<
+include::01_intro.ad[]
+
+<<<
+include::02_download_and_execution.ad[]
+
+<<<
+include::03_configuration.ad[]
+
+<<<
+include::04_migration.ad[]
+
+<<<
+include::05_postmigration_tasks.ad[]
+
+<<<
+include::06_limitations_and_issues.ad[]
+
+<<<
+include::07_release_notes.ad[]

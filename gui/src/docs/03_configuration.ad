@@ -1,0 +1,22 @@
+== Configuration
+
+=== Redmine
+
+To use the Redmine Rest API you need to connect to your Redmine instance as an _Administrator user_ and go to `Administration -> Settings -> Authentication` and enable the option `Enable REST web service`.
+
+image::redmine_settings.png[title="Redmine settings", align="center"]
+
+IMPORTANT: Unfortunately the migration process needs to be done with the Redmine administrator user because the migrator needs to get the email of the users to assign them the issues, comments,... and it is only expose for administrators.
+
+Go to your Redmine profile page and copy the `API access key` because it is the credentials you will need to login into Redmine Rest API.
+
+image::redmine_user_settings.png[title="Redmine user settings", align="center"]
+
+
+=== Taiga
+
+Go to `Project -> Settings` and fill the form with your Redmine and Taiga credentials
+
+image::taiga_settings.png[title="Taiga settings", width="250", align="center"]
+
+NOTE: Please note that you can use any Taiga instance to migrate your projects. For example, if you want to migrate to the hosted Taiga environment you need to use `https://api.taiga.io` as Taiga address.
