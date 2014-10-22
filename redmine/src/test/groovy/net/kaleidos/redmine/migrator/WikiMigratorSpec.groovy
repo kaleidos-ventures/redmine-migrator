@@ -1,5 +1,6 @@
 package net.kaleidos.redmine.migrator
 
+import spock.lang.Unroll
 import spock.lang.Specification
 
 import net.kaleidos.redmine.RedmineTaigaRef
@@ -59,7 +60,7 @@ class WikiMigratorSpec extends MigratorToTaigaSpecBase {
         }
     }
 
-    def 'check how works header fixator'() {
+    def 'check how works header transformer'() {
         given: 'a wiki text with headers in form h1.'
             def wikiContent = """
                 h1.header1
@@ -79,6 +80,28 @@ class WikiMigratorSpec extends MigratorToTaigaSpecBase {
             result.contains("####header4")
             result.contains("#####header5")
 
+    }
+
+    @Unroll
+    def 'check how works the content transformer'() {
+        when: 'applying patch'
+            def result =
+                new WikiMigrator(null, null)
+                    .fixContent(sample)
+        then: 'checking result'
+            result == expected
+        where: 'possible inputs are'
+                    sample                             |  expected
+            '[[Configuraci\u00F3n del Entorno]]'       |  '[[configuracion_del_entorno]]'
+            '[[ Enlaces a prototipos ]]'               |  '[[_enlaces_a_prototipos_]]'
+            '[[Enlaces a prototipos ]]'                |  '[[enlaces_a_prototipos_]]'
+            '[[Enlaces a prototipos]]'                 |  '[[enlaces_a_prototipos]]'
+            '[[NombrePagia |Enlaces a prototipos]]'    |  '[[nombrepagia_|Enlaces a prototipos]]'
+            '[[ NombrePagia|Enlaces a prototipos]]'    |  '[[_nombrepagia|Enlaces a prototipos]]'
+            '[[NombrePagia|Enlaces a prototipos]]'     |  '[[nombrepagia|Enlaces a prototipos]]'
+            '[[ NombrePagia |Enlaces a prototipos]]'   |  '[[_nombrepagia_|Enlaces a prototipos]]'
+            '[[ Nombre Pagia |Enlaces a prototipos]]'  |  '[[_nombre_pagia_|Enlaces a prototipos]]'
+            '[[ Nombre Pagia |Enlaces a prototipos]]'  |  '[[_nombre_pagia_|Enlaces a prototipos]]'
     }
 
 }
