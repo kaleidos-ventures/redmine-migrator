@@ -2,8 +2,13 @@ package net.kaleidos.redmine.migrator
 
 import com.taskadapter.redmineapi.bean.WikiPage as RedmineWikiPage
 import com.taskadapter.redmineapi.bean.WikiPageDetail as RedmineWikiPageDetail
-import groovy.transform.InheritConstructors
+
 import groovy.util.logging.Log4j
+import groovy.transform.InheritConstructors
+
+import java.text.Normalizer
+import java.util.regex.Pattern
+
 import net.kaleidos.domain.Wikipage as TaigaWikiPage
 import net.kaleidos.domain.Attachment as TaigaAttachment
 import net.kaleidos.redmine.RedmineTaigaRef
@@ -11,6 +16,12 @@ import net.kaleidos.redmine.RedmineTaigaRef
 @Log4j
 @InheritConstructors
 class WikiMigrator extends AbstractMigrator<TaigaWikiPage> {
+
+    static final String REGEX1 = /\[\[(\s*\p{L}+(?:\s+\p{L}+)*\s*)\]\]/
+    static final String REGEX2 = /\[\[(\s*\p{L}+(?:\s+\p{L}+)*\s*)\|[^\]]*\]\]/
+    static final String EMPTY = ''
+    static final String BLANK = ' '
+    static final Pattern NORMALIZE_PATTERN = Pattern.compile("\\p{InCombiningDiacriticalMarks}+")
 
     List<TaigaWikiPage> migrateWikiPagesByProject(final RedmineTaigaRef ref) {
         log.debug("Migrating wiki pages from: '${ref.redmineIdentifier}'")
@@ -32,14 +43,47 @@ class WikiMigrator extends AbstractMigrator<TaigaWikiPage> {
 
         return new TaigaWikiPage(
             slug: redmineWikiPage.title,
-            content: fixContentHeaders(redmineWikiPage.text),
+            content: fixContent(redmineWikiPage.text),
             project: redmineTaigaRef.project,
             attachments: extractWikiAttachments(redmineWikiPage)
         )
     }
 
+    Closure<String> fixContent = this.&fixContentHeaders >> this.&fixContentLinks
+
     String fixContentHeaders(String content) {
         return (1..5).inject(content) { acc , n -> acc.replaceAll("h${n}.", ("#" * n)) }
+    }
+
+    String fixContentLinks(String content) {
+        return content
+            .replaceAll(REGEX1, regexSustitution)
+            .replaceAll(REGEX2, regexSustitution)
+    }
+
+    Closure<String> regexSustitution = { Object[] it ->
+        def all = it[0]
+        def group1 = it[1]
+        // replacing spaces in $1
+        def sustitution =
+            // Taiga changes accents
+            normalize(
+                group1
+                    // forcing underscore
+                    .replaceAll(BLANK,"_")
+                    // Taiga converts slugs to lowercase
+                    .toLowerCase())
+        // replacing grupo 1 with group 0 replacement
+        return all.replace(group1, sustitution)
+    }
+
+    String normalize(String source) {
+        String normalizedString =
+            Normalizer.normalize(source, Normalizer.Form.NFD)
+
+        return NORMALIZE_PATTERN
+            .matcher(normalizedString)
+            .replaceAll(EMPTY)
     }
 
     List<TaigaAttachment> extractWikiAttachments(final RedmineWikiPage wiki) {
@@ -97,7 +141,7 @@ class WikiMigrator extends AbstractMigrator<TaigaWikiPage> {
         return save(
             new TaigaWikiPage(
                 slug: 'home',
-                content: alternative.content,
+                content: fixContent(alternative.content),
                 project: alternative.project,
                 owner: alternative.owner,
                 createdDate: alternative.createdDate,
