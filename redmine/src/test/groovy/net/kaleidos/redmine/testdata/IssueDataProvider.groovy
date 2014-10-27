@@ -38,6 +38,7 @@ class IssueDataProvider {
             author: [id: 245, name: 'Ronnie'] as RedmineUser,
             assignee: [id: 245, name: 'Ronnie'] as RedmineUser,
             createdOn: new Date() - 20,
+            dueDate: new Date() + 1,
             subject: "Integration [${index}]"
         )
     }
