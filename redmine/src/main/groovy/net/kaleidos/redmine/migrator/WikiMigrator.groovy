@@ -26,10 +26,13 @@ class WikiMigrator extends AbstractMigrator<TaigaWikiPage> {
     List<TaigaWikiPage> migrateWikiPagesByProject(final RedmineTaigaRef ref) {
         log.debug("Migrating wiki pages from: '${ref.redmineIdentifier}'")
 
-        return findAllWikiPagesFromProject(ref.redmineIdentifier)
-            .collect(this.&getCompleteRedmineWikiPageFrom.rcurry(ref))
-            .collect(this.&createTaigaWikiPage.rcurry(ref))
-            .collect(this.&save)
+        def safeWorkflow =
+            executeSafelyAndWarn(
+                this.&getCompleteRedmineWikiPageFrom.rcurry(ref) >>
+                this.&createTaigaWikiPage.rcurry(ref) >>
+                this.&save)
+
+        return findAllWikiPagesFromProject(ref.redmineIdentifier).findResults(safeWorkflow)
     }
 
     List<RedmineWikiPage> findAllWikiPagesFromProject(String identifier) {
