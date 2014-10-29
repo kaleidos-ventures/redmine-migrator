@@ -12,7 +12,7 @@ class RedmineFileDownloaderSpec extends Specification {
                     .toString()
         when: 'trying to download it'
             def result =
-                new RedmineFileDownloader("asdfasd")
+                new RedmineFileDownloader("https://lala","asdfasd")
                     .download(url)
         then: 'it should get a non empty array of bytes'
             result instanceof byte[]
