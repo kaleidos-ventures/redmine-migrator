@@ -83,7 +83,7 @@ class IssueMigratorSpec extends MigratorToTaigaSpecBase {
                 redmineIssue
             }
             downloadAttachment(_) >> { RedmineAttachment att ->
-                return new RedmineFileDownloader("apiKey002ifj03ifj")
+                return new RedmineFileDownloader("http://lala","apiKey002ifj03ifj")
                     .download(att.contentURL)
             }
         }
