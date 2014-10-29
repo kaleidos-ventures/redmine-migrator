@@ -154,6 +154,7 @@ class IssueMigratorSpec extends MigratorToTaigaSpecBase {
         it.project  &&
         it.owner  &&
         it.createdDate &&
+        it.finishedDate &&
         it.attachments &&
         it.history
     }

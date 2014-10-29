@@ -65,6 +65,7 @@ class IssueMigrator extends AbstractMigrator<TaigaIssue> {
             subject: source.subject,
             description: source.with { description ?: subject },
             createdDate: source.createdOn,
+            finishedDate: source.dueDate,
             owner: getUserMail(source.author),
             assignedTo: getUserMail(source.assignee),
             attachments: extractIssueAttachments(source),
