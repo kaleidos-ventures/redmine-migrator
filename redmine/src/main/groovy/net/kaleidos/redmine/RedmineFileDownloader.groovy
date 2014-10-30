@@ -22,7 +22,7 @@ class RedmineFileDownloader {
         def fixedProtocolUri =
             isLocal ?
                 apiKeyUri :
-                uri.replaceAll(
+                apiKeyUri.replaceAll(
                     HTTP_FIX_PATTERN,
                     URI.create(host).scheme)
 
