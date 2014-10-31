@@ -33,16 +33,18 @@ class IssueMigrator extends AbstractMigrator<TaigaIssue> {
 
         log.debug("Migrating issues from Redmine project ${ref.redmineIdentifier}")
 
+        def workflow =
+            this.&populateIssue >>
+            this.&addRedmineIssueToTaigaProject.rcurry(ref.project) >>
+            this.&save
+
         return issueIterator
             .takeWhile(thereIsNext) // issueIterator is an infinite stream
             .collect { Pagination pagination ->
                 pagination.with(keepPosted) // keeping the UI informed
                 pagination
                     .list
-                    .collect(
-                        this.&populateIssue >>
-                        this.&addRedmineIssueToTaigaProject.rcurry(ref.project) >>
-                        this.&save)
+                    .findResults(executeSafelyAndWarn(workflow))
             }
             .flatten() // return all processed issues
     }
