@@ -18,10 +18,10 @@ class TaigaProjectListView extends MasterView<Project> {
 
     TaigaProjectListView() {
         super(ID, [
-            new MasterViewColumn("id", 5),
-            new MasterViewColumn("slug", 5),
-            new MasterViewColumn("name", 100),
-            new MasterViewColumn("description", 100),
+            new MasterViewColumn("id", 10),
+            new MasterViewColumn("slug", 200),
+            new MasterViewColumn("name", 200),
+            new MasterViewColumn("description", 600),
         ])
     }
 
