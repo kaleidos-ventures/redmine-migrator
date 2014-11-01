@@ -32,9 +32,9 @@ repositories {
 dependencies {
 
     // GUI DEPENDENCIES
-    compile 'org.viewaframework:viewaframework-core:1.0.8'
-    compile 'org.viewaframework:viewaframework-widget:1.0.8'
-    compile('org.viewaframework:viewaframework-docking:1.0.8') {
+    compile 'org.viewaframework:viewaframework-core:1.0.9-SNAPSHOT'
+    compile 'org.viewaframework:viewaframework-widget:1.0.9-SNAPSHOT'
+    compile('org.viewaframework:viewaframework-docking:1.0.9-SNAPSHOT') {
         exclude group: 'org.dockingframes'
     }
 

@@ -12,7 +12,7 @@ import org.viewaframework.view.DefaultViewContainer
     @Controller(type=TaigaProjectDeletionWarningController, pattern='deleteSelected'),
     @Controller(type=TaigaProjectListController, pattern='refresh'),
 ])
-class TaigaProjectListView extends MasterView<Project> {
+class TaigaProjectListView extends MasterViewEditor<Project> {
 
     static final ID = 'taigaProjectListViewID'
 

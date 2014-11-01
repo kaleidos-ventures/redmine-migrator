@@ -4,9 +4,12 @@ import java.awt.Color
 import java.awt.Component
 import javax.swing.JLabel
 import javax.swing.JTable
+
+import org.viewaframework.view.ViewContainer
+import org.viewaframework.widget.view.ui.MasterViewCellRenderer
 import org.jdesktop.swingx.renderer.DefaultTableRenderer
 
-class ConsoleViewEntryRenderer extends DefaultTableRenderer {
+class ConsoleViewEntryRenderer extends DefaultTableRenderer implements MasterViewCellRenderer {
 
     Component getTableCellRendererComponent(JTable table,
                                       Object value,
@@ -33,5 +36,13 @@ class ConsoleViewEntryRenderer extends DefaultTableRenderer {
 
 
    }
+
+    public void setViewContainer(ViewContainer viewContainer) {
+
+    }
+
+    public ViewContainer getViewContainer() {
+        return null
+    }
 
 }
