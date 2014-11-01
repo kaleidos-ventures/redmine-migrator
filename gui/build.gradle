@@ -50,7 +50,8 @@ jar {
         attributes(
             "Main-Class": "gui.TaigaApp",
             "Implementation-Title": "Taiga",
-            "Implementation-Version": '1.0.0-SNAPSHOT'
+            "Implementation-Version": '1.0.0-SNAPSHOT',
+            "SplashScreen-Image": 'gui/img/taiga_about.png'
         )
     }
 }
