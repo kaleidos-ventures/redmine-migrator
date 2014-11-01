@@ -23,15 +23,18 @@ repositories {
     maven {
         url 'https://github.com/eugener/oxbow/raw/master/maven/repository'
     }
+    maven {
+        url 'http://dl.bintray.com/marioggar/maven'
+    }
 }
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
 
     // GUI DEPENDENCIES
-    compile 'org.viewaframework:viewaframework-core:1.0.7'
-    compile 'org.viewaframework:viewaframework-widget:1.0.7'
-    compile('org.viewaframework:viewaframework-docking:1.0.7') {
+    compile 'org.viewaframework:viewaframework-core:1.0.8'
+    compile 'org.viewaframework:viewaframework-widget:1.0.8'
+    compile('org.viewaframework:viewaframework-docking:1.0.8') {
         exclude group: 'org.dockingframes'
     }
 
