@@ -1,6 +1,4 @@
-package gui.console
-
-import gui.warning.WarningView
+package gui.root
 
 import groovy.transform.InheritConstructors
 
@@ -11,16 +9,15 @@ import org.viewaframework.annotation.Listeners
 import org.viewaframework.widget.controller.ExitActionController
 
 import gui.warning.WarningView
+import gui.controller.ExitAppController
 import gui.controller.GlassPaneAwareListener
 
 @Controllers([
     @Controller(type=ExitActionController,pattern='cancelButton'),
-    @Controller(type=ConsoleClearLogController, pattern='acceptButton')
+    @Controller(type=ExitAppController, pattern='acceptButton')
 ])
 @Listeners([
-    @Listener(id="consoleClearWarningViewListenerID", type=GlassPaneAwareListener)
+    @Listener(id="exitAppWarningListenerID", type=GlassPaneAwareListener)
 ])
 @InheritConstructors
-class ConsoleClearWarningView extends WarningView {
-
-}
+class ExitWarningView extends WarningView { }

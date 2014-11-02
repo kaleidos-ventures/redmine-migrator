@@ -3,9 +3,10 @@ package gui.migration
 import gui.controller.*
 import org.viewaframework.annotation.*
 import org.viewaframework.view.AbstractViewContainerDialog
+import org.viewaframework.widget.controller.ExitActionController
 
 @Controllers([
-    @Controller(type=CloseViewController,pattern='closeButton')
+    @Controller(type=ExitActionController,pattern='closeButton')
 ])
 @Listeners([
     @Listener(id="migrationListenerID", type=GlassPaneAwareListener)
