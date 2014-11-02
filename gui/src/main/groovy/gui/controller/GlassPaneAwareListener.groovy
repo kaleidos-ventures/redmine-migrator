@@ -14,19 +14,34 @@ import org.viewaframework.view.event.DefaultViewContainerEventController
 
 class GlassPaneAwareListener extends DefaultViewContainerEventController {
 
+    private final Boolean exitable
+
+    GlassPaneAwareListener() {
+        super()
+        this.exitable = true
+    }
+
+    GlassPaneAwareListener(Boolean exitable) {
+        super()
+        this.exitable = exitable
+    }
+
     @Override
     public void onViewInitUIState(final ViewContainerEvent event) {
         setGlassPaneVisible(event, true)
-        final ViewContainer view = event.source
 
-        ActionListener actionListener = { view.application.viewManager.removeView(view) }
-        KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0)
+        if (exitable) {
+            final ViewContainer view = event.source
 
-        find(JDialog)
-            .in(view)
-            .named('viewDialog')
-            .rootPane
-            .registerKeyboardAction(actionListener, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW)
+            ActionListener actionListener = { view.application.viewManager.removeView(view) }
+            KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0)
+
+            find(JDialog)
+                .in(view)
+                .named('viewDialog')
+                .rootPane
+                .registerKeyboardAction(actionListener, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW)
+            }
     }
 
     @Override

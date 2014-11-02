@@ -9,7 +9,7 @@ import org.viewaframework.widget.controller.ExitActionController
     @Controller(type=ExitActionController,pattern='closeButton')
 ])
 @Listeners([
-    @Listener(id="migrationListenerID", type=GlassPaneAwareListener)
+    @Listener(id="migrationListenerID", type=GlassPaneNotExitableListener)
 ])
 class MigrationProgressView extends AbstractViewContainerDialog {
 
