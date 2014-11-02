@@ -5,8 +5,7 @@ import org.viewaframework.annotation.*
 import org.viewaframework.view.AbstractViewContainerDialog
 
 @Controllers([
-    @Controller(type=SettingsController, pattern="settingsAcceptButton|settingsCancelButton"),
-    @Controller(type=CloseViewByKeyController, pattern="*")
+    @Controller(type=SettingsController, pattern="settingsAcceptButton|settingsCancelButton")
 ])
 @Listeners([
     @Listener(id='xxx',type=CheckStoredSettingsListener)
