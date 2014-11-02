@@ -28,7 +28,7 @@ class IssueMigrator extends AbstractMigrator<TaigaIssue> {
 
         Closure<Boolean> thereIsNext = { Pagination pagination -> pagination.list }
         Closure<Void> keepPosted = { Pagination p->
-            feedback("Processing issues ${p.offset}-${p.offset + p.list.size()} / ${p.total}")
+            feedback("[${ref.project.name}] Processing issues ${p.offset}-${p.offset + p.list.size()} / ${p.total}")
         }
 
         log.debug("Migrating issues from Redmine project ${ref.redmineIdentifier}")
