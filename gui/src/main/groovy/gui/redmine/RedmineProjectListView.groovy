@@ -13,7 +13,7 @@ import org.viewaframework.view.DefaultViewContainer
     @Controller(type=RedmineMigrationWarningController,pattern='migrateSelected'),
     @Controller(type=RedmineProjectListController,pattern='refresh')
 ])
-class RedmineProjectListView extends MasterView<Project> {
+class RedmineProjectListView extends MasterViewEditor<Project> {
 
     static final ID = 'projectListViewID'
 

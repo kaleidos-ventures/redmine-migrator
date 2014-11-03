@@ -23,7 +23,6 @@ import com.taskadapter.redmineapi.RedmineManager
 import com.taskadapter.redmineapi.RedmineManagerFactory
 import com.taskadapter.redmineapi.bean.Project
 
-import gui.exception.ExceptionView
 import gui.settings.SettingsService
 import gui.controller.DefaultActionViewControllerWorker
 

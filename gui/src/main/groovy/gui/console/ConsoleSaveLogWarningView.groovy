@@ -8,13 +8,13 @@ import org.viewaframework.annotation.Controller
 import org.viewaframework.annotation.Controllers
 import org.viewaframework.annotation.Listener
 import org.viewaframework.annotation.Listeners
+import org.viewaframework.widget.controller.ExitActionController
 
 import gui.warning.WarningView
-import gui.controller.CloseViewController
 import gui.controller.GlassPaneAwareListener
 
 @Controllers([
-    @Controller(type=CloseViewController,pattern='cancelButton'),
+    @Controller(type=ExitActionController,pattern='cancelButton'),
     @Controller(type=ConsoleSaveLogController,pattern='acceptButton')
 ])
 @Listeners([

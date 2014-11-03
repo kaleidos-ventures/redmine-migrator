@@ -22,7 +22,6 @@ import org.viewaframework.widget.view.*
 import net.kaleidos.domain.Project
 import net.kaleidos.taiga.TaigaClient
 
-import gui.exception.ExceptionView
 import gui.settings.SettingsService
 import gui.controller.DefaultViewControllerWorker
 

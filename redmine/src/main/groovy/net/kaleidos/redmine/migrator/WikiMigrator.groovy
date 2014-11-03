@@ -24,7 +24,7 @@ class WikiMigrator extends AbstractMigrator<TaigaWikiPage> {
     static final Pattern NORMALIZE_PATTERN = Pattern.compile("\\p{InCombiningDiacriticalMarks}+")
 
     List<TaigaWikiPage> migrateWikiPagesByProject(final RedmineTaigaRef ref) {
-        log.debug("Migrating wiki pages from: '${ref.redmineIdentifier}'")
+        log.debug("Migrating wiki pages from: '${ref.project.name}'")
 
         def safeWorkflow =
             executeSafelyAndWarn(

@@ -21,7 +21,7 @@ class ConsoleSaveLogController extends MigrationProgressAwareController {
     void handleView(ViewContainer view, ActionEvent event) {
         needsToBeRead(2000)
 
-        def model =  loggingTable.model
+        def model =  consoleView.model
         def logEntriesSize = model.size()
 
         publishIndeterminate("Preparing to save $logEntriesSize entries...")
@@ -59,10 +59,6 @@ class ConsoleSaveLogController extends MigrationProgressAwareController {
 
     ConsoleView getConsoleView() {
         return locate(ConsoleView).named(ConsoleView.ID)
-    }
-
-    DynamicTable getLoggingTable() {
-        return find(DynamicTable).in(consoleView).named('loggingTable')
     }
 
 }

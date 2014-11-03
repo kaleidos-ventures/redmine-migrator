@@ -29,7 +29,7 @@ class RedmineMigrator {
         final RedmineProject redmineProject,
         final Closure progressCallBack = { String message, BigDecimal progress = 0.0 -> } ) {
 
-        progressCallBack("Creating project")
+        progressCallBack("[${redmineProject.name}] Creating project ")
         log.debug("MIGRATING ${redmineProject.name}")
 
         projectMigrator
@@ -37,12 +37,12 @@ class RedmineMigrator {
             .each { RedmineTaigaRef ref ->
                 log.debug "Migrating issues from ${ref.redmineIdentifier}"
 
-                progressCallBack("Migrating issues")
+                progressCallBack("[${ref.project.name}] Migrating issues")
                 issueMigrator.migrateIssuesByProject(ref,progressCallBack)
 
                 log.debug "Migrating wikipages from ${ref.redmineIdentifier}"
 
-                progressCallBack("Migrating wiki pages")
+                progressCallBack("[${ref.project.name}] Migrating wiki pages")
                 def possibleWikiPages = wikiMigrator.migrateWikiPagesByProject(ref)
 
                 log.debug("Wiki pages found: ${possibleWikiPages.size()}")

@@ -4,13 +4,13 @@ import javax.swing.JTextArea
 import org.apache.log4j.spi.LoggingEvent
 import org.apache.log4j.AppenderSkeleton
 
-import org.viewaframework.swing.table.DynamicTableModel
+import org.viewaframework.widget.view.ui.MasterViewModel
 
 class ConsoleAppender extends AppenderSkeleton {
 
-    DynamicTableModel<ConsoleViewEntry> loggingModel
+    MasterViewModel<ConsoleViewEntry> loggingModel
 
-    ConsoleAppender(DynamicTableModel<ConsoleViewEntry> model) {
+    ConsoleAppender(MasterViewModel<ConsoleViewEntry> model) {
         super()
         loggingModel = model
     }

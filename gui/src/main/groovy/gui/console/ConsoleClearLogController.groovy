@@ -17,12 +17,7 @@ class ConsoleClearLogController extends AbstractActionController {
 
     @Override
     void postHandlingView(ViewContainer view, ActionEvent event) {
-        DynamicTable table =
-            find(DynamicTable)
-                .in(logView)
-                .named('loggingTable')
-
-        table.model.clear()
+        logView.model.clear()
         viewManager.removeView(view)
     }
 

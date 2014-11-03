@@ -21,7 +21,6 @@ import org.viewaframework.widget.view.*
 import gui.swingx.JXBusyFeedbackLabel
 import gui.taiga.TaigaProjectListView
 import gui.settings.SettingsService
-import gui.exception.ExceptionView
 import gui.migration.MigrationProgress
 import gui.migration.MigrationProgressView
 import gui.controller.DefaultActionViewControllerWorker

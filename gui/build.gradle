@@ -23,15 +23,18 @@ repositories {
     maven {
         url 'https://github.com/eugener/oxbow/raw/master/maven/repository'
     }
+    maven {
+        url 'http://dl.bintray.com/marioggar/maven'
+    }
 }
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
 
     // GUI DEPENDENCIES
-    compile 'org.viewaframework:viewaframework-core:1.0.7'
-    compile 'org.viewaframework:viewaframework-widget:1.0.7'
-    compile('org.viewaframework:viewaframework-docking:1.0.7') {
+    compile 'org.viewaframework:viewaframework-core:1.0.9'
+    compile 'org.viewaframework:viewaframework-widget:1.0.9'
+    compile('org.viewaframework:viewaframework-docking:1.0.9') {
         exclude group: 'org.dockingframes'
     }
 
@@ -50,7 +53,8 @@ jar {
         attributes(
             "Main-Class": "gui.TaigaApp",
             "Implementation-Title": "Taiga",
-            "Implementation-Version": '1.0.0-SNAPSHOT'
+            "Implementation-Version": '1.0.0-SNAPSHOT',
+            "SplashScreen-Image": 'gui/img/taiga_about.png'
         )
     }
 }
