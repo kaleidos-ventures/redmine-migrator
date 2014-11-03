@@ -1,0 +1,47 @@
+== Limitations and known issues
+
+You need to keep in mind that the migration process is not perfect because Redmine and Taiga features don't fully overlap each other.
+
+You also need to check that your Redmine version expose in http://www.redmine.org/projects/redmine/wiki/Rest_api[the REST API^] all the objects that are going to be migrated. For example, until Redmine 2.2 the Wikipages aren't exposed by the REST Api.
+
+In the following sections we explain the migration decisions for every element in Redmine.
+
+
+=== Projects
+
+The projects are migrated with the same name and description as in Redmine. A new slug is created to avoid name colisions with other users. You can modify all these values in `Admin -> Project profile -> Project details`.
+
+
+=== Users
+
+We made the decision of do not migrate users. The users must previously exist in Taiga before the migration with the same email as in Redmine. During the migration process we use the email of the users to asign them as the owner of an issue, the comments,...
+
+
+=== Issues
+
+All the issues of the projects are migrated to Taiga and the Redmine trackers, priorities and status are also migrated.
+For every issue besides the basic data we migrate the comments, attachments and assigned user.
+
+
+=== Wiki
+
+Wikis are one of those cases where the migration is not perfect. Redmine supports different markup languages such as `textile` or `reStructuredText`. Taiga wikis are written in `Markdown` so you might need to fix some formats after the migration.
+Besides the text of the wikipages, all the attachments are also migrated to the wikipages.
+
+Another important thing is that in Taiga the main wiki page is called `Home` and in Redmine, by default it is `Wiki`. Even so it's possible to change the default wiki page in Redmine. As Redmine API doesn't expose the name of the default wiki page we try to figure it out which is the default page. We try with `home` or `wiki` and if none of these pages exists in Redmine, we set the oldest page as the new home page.
+
+
+=== Files
+
+Currently Redmine does not expose the files in the REST API, so it is not possible to migrate them.
+
+
+=== Documents
+
+Currently Redmine does not expose the documents in the REST API, so it is not possible to migrate them.
+
+
+=== Sprints, User stories and Tasks
+
+All the issues in Redmine are migrated to issues in Taiga, so after the migration the backlog will be empty. We use in Redmine http://www.redminebacklogs.net/[the backlogs plugin] for scrum.
+For the next major release of the migrator we're going to migrate the sprints, user stories and tasks of the Redmine Backlogs plugin to Sprints, User stories and Tasks in Taiga.

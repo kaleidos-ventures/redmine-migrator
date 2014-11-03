@@ -1,3 +1,7 @@
+apply plugin: 'groovy'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+apply plugin: 'org.asciidoctor.gradle.asciidoctor'
 
 buildscript {
     repositories {
@@ -5,11 +9,9 @@ buildscript {
     }
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.0.3'
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.0'
     }
 }
-
-apply plugin: 'groovy'
-apply plugin: 'com.github.johnrengelman.shadow'
 
 repositories {
     mavenCentral()
@@ -59,10 +61,21 @@ jar {
     }
 }
 
-
 task migratorUI(type: JavaExec) {
     group = 'taiga'
     description = 'Runs migrator GUI'
     main = 'gui.TaigaApp'
     classpath = sourceSets.main.runtimeClasspath
+}
+
+asciidoctor {
+    sourceDir = 'src/docs' as File
+    options = [
+        attributes: [
+            'icons': 'font',
+            'source-highlighter': 'prettify',
+            'toc': 'left',
+            'toclevels': 4
+        ]
+    ]
 }

@@ -1,0 +1,12 @@
+== Postmigration tasks
+
+With your projects migrated into Taiga you can now connect to your Taiga instance and adjust the project configuration.
+
+image::taiga_projects_migrated.jpg[title="Your project has been migrated", align="center"]
+
+Please select the project and go to the admin menu. Now you can do a fine tunning of all the options in your project:
+
+- Custom attributes: You can rearrange and change the color of the issue statuses, types, priorities and severities.
+- Roles & Permissions: Create new roles and change the permissions of the current roles.
+- Manage members: Change the profile of the users and invite new users to your Taiga project.
+- Project Profile: Enable or disable the Taiga modules you want to use and also set the default values for issue priority, severities,...

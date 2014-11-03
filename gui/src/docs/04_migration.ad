@@ -1,0 +1,20 @@
+== Migration
+
+If your settings are correct you can click on _Redmine_ button to load all your Redmine projects.
+
+image::list_redmine_projects.png[title="Redmine projects", align="center"]
+
+Now you can select one or more projects and click on the migrate button. Please note the migrator allows multiple selection interval using CTRL key.
+
+image::migrating_project_01.png[title="Confirm project migration", width="250", align="center"]
+
+TIP: Please open the log before the migration starts to check the progress.
+
+image::migrating_project_02.png[title="Migrating projects", align="center"]
+image::migrating_project_03.png[title="Project migrated", align="center"]
+
+Open _Taiga_ projects in `Projects -> Taiga Projects` and you can check that the project has been migrated.
+
+image::taiga_projects.png[title="Taiga projects with the migrated one", align="center"]
+
+Please check the log for errors and warnings during the migration process.
