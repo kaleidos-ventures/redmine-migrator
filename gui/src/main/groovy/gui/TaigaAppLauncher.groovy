@@ -19,6 +19,9 @@ import javax.swing.plaf.FontUIResource;
 import javax.swing.plaf.InsetsUIResource;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
+import javax.swing.InputMap
+import javax.swing.KeyStroke
+
 import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.painter.MattePainter;
 
@@ -53,6 +56,14 @@ class TaigaAppLauncher extends DefaultApplicationLauncher {
             'JXTitledPanel.titlePainter',
             new PainterUIResource<JXTitledPanel>(new MattePainter(gradient, true))
         )
+
+        // Change button key action to ENTER
+        InputMap im = (InputMap)UIManager.get("Button.focusInputMap")
+        im.put( KeyStroke.getKeyStroke( "ENTER" ), "pressed" )
+        im.put( KeyStroke.getKeyStroke( "released ENTER" ), "released" )
+
+        UIManager.put('Button.focusInputMap', im)
+
     }
 
 }
