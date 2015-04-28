@@ -35,7 +35,7 @@ class RedmineMigrationController extends MigrationProgressAwareController {
             settings = Try { service.loadSettings() }
             _        = Try { checkAvailability(service, settings) }
             migrator = buildMigratorWithSettings(settings)
-            total    = Try { migrateWith(migrator) }
+            total    = Try { migrateProjectsWith(selectedProjectList, migrator) }
 
             $return total
         }
@@ -57,14 +57,15 @@ class RedmineMigrationController extends MigrationProgressAwareController {
         publishFailure(failure.exception)
     }
 
-    Integer migrateWith(final RedmineMigrator migrator) {
-        Integer total = selectedProjectList.size()
+    Integer migrateProjectsWith(final List<Project> projects, final RedmineMigrator migrator) {
+        Integer total = projects.size()
+
         log.debug("Migrating $total projects")
 
-        selectedProjectList.eachWithIndex { Project project, Integer index ->
+        projects.eachWithIndex { Project project, Integer index ->
             migrator.migrateProject(
                 project,
-                progressClosure(project.name, (index + 1).div(total + 1))
+                getProgressClosure(project.name, (index + 1).div(total + 1))
             )
         }
 
@@ -75,7 +76,7 @@ class RedmineMigrationController extends MigrationProgressAwareController {
        return locate(RedmineProjectListView.ID).model.selectedObjects
     }
 
-    Try<RedmineMigrator> buildMigratorWithSettings(Settings settings) {
+    Try<RedmineMigrator> buildMigratorWithSettings(final Settings settings) {
         return $do {
             redmine  = Try { RedmineClientFactory.newInstance(settings.properties) }
             taiga    = Try { initTaigaClientWith(settings) }
@@ -85,22 +86,15 @@ class RedmineMigrationController extends MigrationProgressAwareController {
     }
 
     TaigaClient initTaigaClientWith(final Settings settings) {
-        return new TaigaClient(settings.taigaUrl)
-        .authenticate(
+        return new TaigaClient(settings.taigaUrl).authenticate(
             settings.taigaUsername,
             settings.taigaPassword
         )
     }
 
-    Closure<Void> progressClosure = { final String projectName, final BigDecimal overallProgress ->
-        return { String message, BigDecimal progress = overallProgress ->
-             publish(
-                new MigrationProgress(
-                    projectName: projectName,
-                    message: message,
-                    progress: progress
-                )
-            )
+    Closure<Void> getProgressClosure(final String projectName, final BigDecimal overallProgress) {
+        return { String msg, BigDecimal progress = overallProgress ->
+             publish(new MigrationProgress(projectName: projectName, message: msg, progress: progress))
         }
     }
 
