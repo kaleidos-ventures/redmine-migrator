@@ -69,9 +69,7 @@ class RedmineMigrationController extends MigrationProgressAwareController {
     RedmineMigrator buildMigratorWithSettings(Settings settings) {
         log.debug("Configuring redmine client")
         def redmineClient =
-            RedmineClientFactory.newInstance(
-                settings.redmineUrl,
-                settings.redmineApiKey)
+            RedmineClientFactory.newInstance(settings.properties)
 
         log.debug("Configuring Taiga client")
         def taigaClient =

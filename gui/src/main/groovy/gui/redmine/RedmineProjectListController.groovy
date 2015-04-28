@@ -59,9 +59,7 @@ class RedmineProjectListController extends DefaultActionViewControllerWorker<Pro
         if (areUp) {
         try {
             def redmineClient  =
-            RedmineClientFactory.newInstance(
-                settings.redmineUrl,
-                settings.redmineApiKey)
+                RedmineClientFactory.newInstance(settings.properties)
 
         def projects = null
             projects = redmineClient.findAllProject()

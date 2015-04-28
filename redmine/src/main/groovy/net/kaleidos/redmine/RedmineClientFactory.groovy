@@ -4,17 +4,19 @@ import com.taskadapter.redmineapi.RedmineManagerFactory
 
 final class RedmineClientFactory {
 
-    public static RedmineClient newInstance(String host, String apiKey) {
+    public static RedmineClient newInstance(Map<String,?> settings) {
         def httpConfig =
             RedmineManagerFactory.createLongTermConfiguration(
                 RedmineManagerFactory.createInsecureConnectionManager(),
-                10000, // timeout
-                10000 // eviction check
+                settings.redmineTimeout,
+                settings.redmineTimeout - 1000
             )
+        def redmineFileDownloader = new RedmineFileDownloader(httpConfig.client, settings.redmineUrl, settings.redmineApiKey)
+        def redmineManager = RedmineManagerFactory.createWithApiKey(settings.redmineUrl, settings.redmineApiKey, httpConfig)
 
         return new RedmineClientImpl(
-            redmineFileDownloader: new RedmineFileDownloader(httpConfig.client, host, apiKey),
-            redmineManager: RedmineManagerFactory.createWithApiKey(host, apiKey, httpConfig)
+            redmineFileDownloader: redmineFileDownloader,
+            redmineManager: redmineManager
         )
     }
 
