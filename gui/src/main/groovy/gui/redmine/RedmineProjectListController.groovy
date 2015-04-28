@@ -26,6 +26,7 @@ import com.taskadapter.redmineapi.bean.Project
 import gui.settings.SettingsService
 import gui.controller.DefaultActionViewControllerWorker
 
+import net.kaleidos.redmine.RedmineClientFactory
 import groovy.util.logging.Log4j
 
 @Log4j
@@ -56,13 +57,22 @@ class RedmineProjectListController extends DefaultActionViewControllerWorker<Pro
         def areUp = service.areServicesUp(settings.redmineUrl)
 
         if (areUp) {
-            def redmineManager =
-                new RedmineManager(
-                    settings.redmineUrl,
-                    settings.redmineApiKey)
+        try {
+            def redmineClient  =
+            RedmineClientFactory.newInstance(
+                settings.redmineUrl,
+                settings.redmineApiKey)
 
-            publish(redmineManager.projects)
+        def projects = null
+            projects = redmineClient.findAllProject()
+
+            publish(projects)
+
+        } catch(e) {
+            log.error(e.message)
         }
+        }
+
     }
 
     @Override

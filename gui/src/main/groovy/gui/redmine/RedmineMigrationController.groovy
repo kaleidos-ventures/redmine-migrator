@@ -47,9 +47,9 @@ class RedmineMigrationController extends MigrationProgressAwareController {
             return
         }
 
-        def migrator = buildMigratorWithSettings(settings)
 
         try {
+            def migrator = buildMigratorWithSettings(settings)
 
             selectedProjectList.eachWithIndex { Project project, index ->
                 migrator.migrateProject(
@@ -67,16 +67,20 @@ class RedmineMigrationController extends MigrationProgressAwareController {
     }
 
     RedmineMigrator buildMigratorWithSettings(Settings settings) {
+        log.debug("Configuring redmine client")
         def redmineClient =
             RedmineClientFactory.newInstance(
                 settings.redmineUrl,
                 settings.redmineApiKey)
+
+        log.debug("Configuring Taiga client")
         def taigaClient =
             new TaigaClient(settings.taigaUrl)
                 .authenticate(
                     settings.taigaUsername,
                     settings.taigaPassword)
 
+        log.debug("Building Redmine Migrator")
         return new RedmineMigrator(redmineClient, taigaClient)
     }
 
