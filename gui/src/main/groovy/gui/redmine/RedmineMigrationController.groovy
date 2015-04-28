@@ -43,12 +43,10 @@ class RedmineMigrationController extends MigrationProgressAwareController {
         publishResult(result)
     }
 
-    Boolean checkAvailability(final SettingsService service, final Settings settings) {
+    void checkAvailability(final SettingsService service, final Settings settings) {
         if (!service.areServicesUp(settings.redmineUrl, settings.taigaUrl)) {
-            throw new Exception("Please check your connections!!")
+            throw new IllegalStateException("Please check your connections!!")
         }
-
-        return Boolean.TRUE
     }
 
     void publishResult(final Try.Success success) {
