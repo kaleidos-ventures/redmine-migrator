@@ -94,12 +94,4 @@ class RedmineMigrationController extends MigrationProgressAwareController {
         }
     }
 
-    String buildMessage(MigrationProgress migrationProgress) {
-        if (!migrationProgress.projectName) {
-            return migrationProgress.message
-        }
-
-        return "${migrationProgress.projectName} : ${migrationProgress.message}"
-    }
-
 }
