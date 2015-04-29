@@ -12,11 +12,20 @@ Go to your Redmine profile page and copy the `API access key` because it is the 
 
 image::redmine_user_settings.png[title="Redmine user settings", align="center"]
 
+Then you can go to the migrator `Project -> Settings` and fill the form with your Redmine info:
+
+image::taiga_settings.png[title="Redmine settings", width="300", align="center"]
+
+* `Address`: The url where Redmine instance is available
+* `ApiKey`: The Api access key you've already copied from Redmine
+* `Timeout`: If your Redmine instance is in a very slow network you may
+need to change this setting to a higher value. This value should be
+set in milliseconds.
 
 === Taiga
 
 Go to `Project -> Settings` and fill the form with your Redmine and Taiga credentials
 
-image::taiga_settings.png[title="Taiga settings", width="250", align="center"]
+image::taiga_settings.png[title="Taiga settings", width="300", align="center"]
 
 NOTE: Please note that you can use any Taiga instance to migrate your projects. For example, if you want to migrate to the hosted Taiga environment you need to use `https://api.taiga.io` as Taiga address.

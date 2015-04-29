@@ -1,6 +1,6 @@
 == Migration
 
-If your settings are correct you can click on _Redmine_ button to load all your Redmine projects.
+If your settings are correct you can click on `_Redmine_ button` or `Ctrl-r` to load all your Redmine projects.
 
 image::list_redmine_projects.png[title="Redmine projects", align="center"]
 
@@ -18,3 +18,12 @@ Open _Taiga_ projects in `Projects -> Taiga Projects` and you can check that the
 image::taiga_projects.png[title="Taiga projects with the migrated one", align="center"]
 
 Please check the log for errors and warnings during the migration process.
+
+Sometimes could be useful to export the log. In the `Log window` there
+are two buttons, one to clear the log and another one to export what
+is in the log so far.
+
+image::export_log.png[title="Export logs", align="center"]
+
+By default the log will be exported to the user
+home directory with a name like 'taiga_migrator_[timestamp].log`.
