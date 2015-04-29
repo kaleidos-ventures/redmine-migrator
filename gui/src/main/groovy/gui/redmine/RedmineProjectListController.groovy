@@ -19,10 +19,14 @@ import org.viewaframework.controller.*
 import org.viewaframework.view.perspective.*
 import org.viewaframework.widget.view.*
 
+import fnz.data.Try
+import fnz.data.Maybe
+
 import com.taskadapter.redmineapi.RedmineManager
 import com.taskadapter.redmineapi.RedmineManagerFactory
 import com.taskadapter.redmineapi.bean.Project
 
+import gui.settings.Settings
 import gui.settings.SettingsService
 import gui.controller.DefaultActionViewControllerWorker
 
@@ -33,17 +37,32 @@ import groovy.util.logging.Log4j
 class RedmineProjectListController extends DefaultActionViewControllerWorker<Project> {
 
     @Override
-    void preHandlingView(ViewContainer view, ActionEvent event) {
-        updateStatus("Loading list...", 50)
-        def projectsView = getRedmineProjectListView()
+    void preHandlingView(final ViewContainer view, final ActionEvent event) {
+        updateStatus(Success("Loading list..."), 50)
 
-        if (!projectsView) {
-            projectsView = new RedmineProjectListView()
-            viewManager.addView(projectsView , PerspectiveConstraint.RIGHT)
+        Try cleaned = $do {
+            v = Maybe(redmineProjectListView).or { createAndAddView() }
+            _ = Try { log.debug("Clearing project list...") }
+            _ = Try { v.model.clear() }
+            _ = Try { view.rootPane.glassPane.visible = true }
+
+            $return "Project list cleaned"
         }
 
-        projectsView.model.clear()
-        view.rootPane.glassPane.visible = true
+        updateStatus(cleaned, 0)
+    }
+
+    Maybe<ViewContainer> createAndAddView() {
+        Maybe<ViewContainer> maybeViewContainer =
+            $do {
+                view  = Just(new RedmineProjectListView())
+                _     = Try(view) { v -> viewManager.addView(v, PerspectiveConstraint.RIGHT) }
+                added = Just(view)
+
+                $return added
+            }
+
+        return maybeViewContainer
     }
 
     ViewContainer getRedmineProjectListView() {
@@ -51,53 +70,76 @@ class RedmineProjectListController extends DefaultActionViewControllerWorker<Pro
     }
 
     @Override
-    void handleView(ViewContainer view, ActionEvent event) {
-        def service = new SettingsService()
-        def settings = service.loadSettings()
-        def areUp = service.areServicesUp(settings.redmineUrl)
+    void handleView(final ViewContainer view, final ActionEvent event) {
+        log.debug("Listing Redmine projects")
 
-        if (areUp) {
-        try {
-            def redmineClient  =
-                RedmineClientFactory.newInstance(settings.properties)
+        Try result = $do {
+            service  = Try { new SettingsService() }
+            settings = Try { service.loadSettings() }
+            _        = Try { checkAvailability(service, settings) }
+            redmine  = Try { RedmineClientFactory.newInstance(settings.properties) }
+            projects = Try { redmine.findAllProject() }
 
-        def projects = null
-            projects = redmineClient.findAllProject()
-
-            publish(projects)
-
-        } catch(e) {
-            log.error(e.message)
-        }
+            $return projects
         }
 
+        publishResult(result)
+    }
+
+    void publishResult(final Try.Success success) {
+        publish(val(success))
+    }
+
+    void publishResult(final Try.Failure failure) {
+        log.error(failure.exception.message)
+    }
+
+    void checkAvailability(final SettingsService service, final Settings settings) {
+        if (!service.areServicesUp(settings.redmineUrl, settings.taigaUrl)) {
+            throw new IllegalStateException("Please check your connections!!")
+        }
     }
 
     @Override
-    void handleViewPublising(ViewContainer view, ActionEvent event, List<Project> chunks) {
+    void handleViewPublising(final ViewContainer view, final ActionEvent event, final List<Project> chunks) {
         redmineProjectListView.model.addAll(chunks.flatten())
     }
 
     @Override
-    void postHandlingView(ViewContainer viewContainer, ActionEvent event) {
-        viewContainer.rootPane.glassPane.visible = false
-        def rows = redmineProjectListView.model.rowCount
+    void postHandlingView(final ViewContainer viewContainer, final ActionEvent event) {
+        Try hasResult = $do {
+            _      = Try { viewContainer.rootPane.glassPane.visible = false }
+            rows   = Try { redmineProjectListView.model.rowCount }
+            result = rows ? Success("Showing $rows Redmine projects") : Try.failure(new IllegalStateException("No results found"))
 
-        if (!rows) {
-            setMigrationButtonEnabled(false)
-            updateStatus("No results found", 0)
-            return
+            $return result
         }
 
-        setMigrationButtonEnabled(true)
-        updateStatus("Showing $rows Redmine projects ", 0)
+        updateMigrationButton(hasResult)
+        updateStatus(hasResult, 0)
     }
 
-    void setMigrationButtonEnabled(boolean enabled) {
+    void updateMigrationButton(final Try.Success sucess) {
+        setMigrationButtonEnabled(true)
+    }
+
+    void updateMigrationButton(final Try.Failure failure) {
+        setMigrationButtonEnabled(false)
+    }
+
+    void updateStatus(final Try.Success<String> message, final Integer progress) {
+        updateStatus(val(message), progress)
+    }
+
+    void updateStatus(final Try.Failure failure) {
+        updateStatus(failure.exception.message, 0)
+    }
+
+    void setMigrationButtonEnabled(final boolean enabled) {
         migratedSelectedButton.setEnabled(enabled)
     }
 
-    void updateStatus(String message, Integer progress) {
+    void updateStatus(final String message, final Integer progress) {
         statusBarProgressBar.value = progress
         statusBarMessageLabel.text = message
     }
