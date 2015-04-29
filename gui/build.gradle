@@ -34,7 +34,11 @@ repositories {
 dependencies {
 
     // FNZ
-    compile 'fnz:fnz:1.0.5'
+    compile('fnz:fnz-jdk7:1.0.5') {
+        exclude module: 'log4j'
+        exclude module: 'groovy'
+        exclude module: 'groovy-all'
+    }
     // GUI DEPENDENCIES
     compile 'org.viewaframework:viewaframework-core:1.0.9'
     compile 'org.viewaframework:viewaframework-widget:1.0.9'
