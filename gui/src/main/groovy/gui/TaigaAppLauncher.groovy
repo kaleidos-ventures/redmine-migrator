@@ -46,7 +46,7 @@ class TaigaAppLauncher extends DefaultApplicationLauncher {
     }
 
     void modifyTitlePanelTaigaBackground() {
-        Color primaryBackground = getSafeColor('ProgressBar.selectionBackground', new ColorUIResource(49, 121, 242))
+        Color primaryBackground = getSafeColor('ProgressBar.selectionBackground', new ColorUIResource(114, 161, 20))
         Color lighterPrimaryBackground = primaryBackground.brighter()
 
         GradientPaint gradient = new GradientPaint(0, 0, primaryBackground, 0, 1, lighterPrimaryBackground)
