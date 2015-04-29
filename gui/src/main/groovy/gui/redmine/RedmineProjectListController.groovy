@@ -44,7 +44,7 @@ class RedmineProjectListController extends DefaultActionViewControllerWorker<Pro
             v = Maybe(redmineProjectListView).or { createAndAddView() }
             _ = Try { log.debug("Clearing project list...") }
             _ = Try { v.model.clear() }
-            _ = Try { view.rootPane.glassPane.visible = true }
+            _ = Try { locateRootView().rootPane.glassPane.visible = true }
 
             $return "Project list cleaned"
         }
@@ -108,7 +108,7 @@ class RedmineProjectListController extends DefaultActionViewControllerWorker<Pro
     @Override
     void postHandlingView(final ViewContainer viewContainer, final ActionEvent event) {
         Try hasResult = $do {
-            _      = Try { viewContainer.rootPane.glassPane.visible = false }
+            _      = Try { locateRootView().rootPane.glassPane.visible = false }
             rows   = Try { redmineProjectListView.model.rowCount }
             result = rows ? Success("Showing $rows Redmine projects") : Try.failure(new IllegalStateException("No results found"))
 
