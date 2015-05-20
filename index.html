@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.0">
+<meta name="author" content="by Taiga">
+<title>Redmine to Taiga migrator</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic|Noto+Serif:400,400italic,700,700italic|Droid+Sans+Mono:400">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
+<script>document.addEventListener('DOMContentLoaded', prettyPrint)</script>
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<h1>Redmine to Taiga migrator</h1>
+<div class="details">
+<span id="author" class="author">by Taiga</span><br>
+</div>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_intro">1. Intro</a></li>
+<li><a href="#_download_execution">2. Download &amp; Execution</a></li>
+<li><a href="#_configuration">3. Configuration</a>
+<ul class="sectlevel2">
+<li><a href="#_redmine">3.1. Redmine</a></li>
+<li><a href="#_taiga">3.2. Taiga</a></li>
+</ul>
+</li>
+<li><a href="#_migration">4. Migration</a></li>
+<li><a href="#_postmigration_tasks">5. Postmigration tasks</a></li>
+<li><a href="#_limitations_and_known_issues">6. Limitations and known issues</a>
+<ul class="sectlevel2">
+<li><a href="#_projects">6.1. Projects</a></li>
+<li><a href="#_users">6.2. Users</a></li>
+<li><a href="#_issues">6.3. Issues</a></li>
+<li><a href="#_wiki">6.4. Wiki</a></li>
+<li><a href="#_files">6.5. Files</a></li>
+<li><a href="#_documents">6.6. Documents</a></li>
+<li><a href="#_sprints_user_stories_and_tasks">6.7. Sprints, User stories and Tasks</a></li>
+</ul>
+</li>
+<li><a href="#_release_notes">7. Release notes</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_intro">1. Intro</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This is the documentation for the Redmine to Taiga migrator. You can find the source code of this project in the <a href="https://github.com/taigaio/redmine-to-taiga" target="_blank">Taigaio Github account</a>.</p>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_download_execution">2. Download &amp; Execution</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>First of all you need to download the Redmine to Taiga migrator. Please download the lastest version of <a href="https://bintray.com/kaleidos/maven/redmine-to-taiga/view/general" target="_blank">the migrator</a>. As a dependency you only need Java in your system.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+You need JDK 7 to execute the importer
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Now just execute:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">java -jar redmine-migrator-&lt;version&gt;.jar</code></pre>
+</div>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/main.png" alt="main">
+</div>
+<div class="title">Figure 1. Main window</div>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_configuration">3. Configuration</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_redmine">3.1. Redmine</h3>
+<div class="paragraph">
+<p>To use the Redmine Rest API you need to connect to your Redmine instance as an <em>Administrator user</em> and go to <code>Administration &#8594; Settings &#8594; Authentication</code> and enable the option <code>Enable REST web service</code>.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/redmine_settings.png" alt="redmine settings">
+</div>
+<div class="title">Figure 2. Redmine settings</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Unfortunately the migration process needs to be done with the Redmine administrator user because the migrator needs to get the email of the users to assign them the issues, comments,&#8230;&#8203; and it is only expose for administrators.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Go to your Redmine profile page and copy the <code>API access key</code> because it is the credentials you will need to login into Redmine Rest API.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/redmine_user_settings.png" alt="redmine user settings">
+</div>
+<div class="title">Figure 3. Redmine user settings</div>
+</div>
+<div class="paragraph">
+<p>Then you can go to the migrator <code>Project &#8594; Settings</code> and fill the form with your Redmine info:</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/taiga_settings.png" alt="taiga settings" width="300">
+</div>
+<div class="title">Figure 4. Redmine settings</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Address</code>: The url where Redmine instance is available</p>
+</li>
+<li>
+<p><code>ApiKey</code>: The Api access key you&#8217;ve already copied from Redmine</p>
+</li>
+<li>
+<p><code>Timeout</code>: If your Redmine instance is in a very slow network you may
+need to change this setting to a higher value. This value should be
+set in milliseconds.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_taiga">3.2. Taiga</h3>
+<div class="paragraph">
+<p>Go to <code>Project &#8594; Settings</code> and fill the form with your Redmine and Taiga credentials</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/taiga_settings.png" alt="taiga settings" width="300">
+</div>
+<div class="title">Figure 5. Taiga settings</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Please note that you can use any Taiga instance to migrate your projects. For example, if you want to migrate to the hosted Taiga environment you need to use <code><a href="https://api.taiga.io" class="bare">https://api.taiga.io</a></code> as Taiga address.
+</td>
+</tr>
+</table>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_migration">4. Migration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If your settings are correct you can click on <code><em>Redmine</em> button</code> or <code>Ctrl-r</code> to load all your Redmine projects.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/list_redmine_projects.png" alt="list redmine projects">
+</div>
+<div class="title">Figure 6. Redmine projects</div>
+</div>
+<div class="paragraph">
+<p>Now you can select one or more projects and click on the migrate button. Please note the migrator allows multiple selection interval using CTRL key.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/migrating_project_01.png" alt="migrating project 01" width="250">
+</div>
+<div class="title">Figure 7. Confirm project migration</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Please open the log before the migration starts to check the progress.
+</td>
+</tr>
+</table>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/migrating_project_02.png" alt="migrating project 02">
+</div>
+<div class="title">Figure 8. Migrating projects</div>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/migrating_project_03.png" alt="migrating project 03">
+</div>
+<div class="title">Figure 9. Project migrated</div>
+</div>
+<div class="paragraph">
+<p>Open <em>Taiga</em> projects in <code>Projects &#8594; Taiga Projects</code> and you can check that the project has been migrated.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/taiga_projects.png" alt="taiga projects">
+</div>
+<div class="title">Figure 10. Taiga projects with the migrated one</div>
+</div>
+<div class="paragraph">
+<p>Please check the log for errors and warnings during the migration process.</p>
+</div>
+<div class="paragraph">
+<p>Sometimes could be useful to export the log. In the <code>Log window</code> there
+are two buttons, one to clear the log and another one to export what
+is in the log so far.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/export_log.png" alt="export log">
+</div>
+<div class="title">Figure 11. Export logs</div>
+</div>
+<div class="paragraph">
+<p>By default the log will be exported to the user
+home directory with a name like 'taiga_migrator_[timestamp].log`.</p>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_postmigration_tasks">5. Postmigration tasks</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>With your projects migrated into Taiga you can now connect to your Taiga instance and adjust the project configuration.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/taiga_projects_migrated.jpg" alt="taiga projects migrated">
+</div>
+<div class="title">Figure 12. Your project has been migrated</div>
+</div>
+<div class="paragraph">
+<p>Please select the project and go to the admin menu. Now you can do a fine tunning of all the options in your project:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Custom attributes: You can rearrange and change the color of the issue statuses, types, priorities and severities.</p>
+</li>
+<li>
+<p>Roles &amp; Permissions: Create new roles and change the permissions of the current roles.</p>
+</li>
+<li>
+<p>Manage members: Change the profile of the users and invite new users to your Taiga project.</p>
+</li>
+<li>
+<p>Project Profile: Enable or disable the Taiga modules you want to use and also set the default values for issue priority, severities,&#8230;&#8203;</p>
+</li>
+</ul>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_limitations_and_known_issues">6. Limitations and known issues</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You need to keep in mind that the migration process is not perfect because Redmine and Taiga features don&#8217;t fully overlap each other.</p>
+</div>
+<div class="paragraph">
+<p>You also need to check that your Redmine version expose in <a href="http://www.redmine.org/projects/redmine/wiki/Rest_api" target="_blank">the REST API</a> all the objects that are going to be migrated. For example, until Redmine 2.2 the Wikipages aren&#8217;t exposed by the REST Api.</p>
+</div>
+<div class="paragraph">
+<p>In the following sections we explain the migration decisions for every element in Redmine.</p>
+</div>
+<div class="sect2">
+<h3 id="_projects">6.1. Projects</h3>
+<div class="paragraph">
+<p>The projects are migrated with the same name and description as in Redmine. A new slug is created to avoid name colisions with other users. You can modify all these values in <code>Admin &#8594; Project profile &#8594; Project details</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_users">6.2. Users</h3>
+<div class="paragraph">
+<p>We made the decision of do not migrate users. The users must previously exist in Taiga before the migration with the same email as in Redmine. During the migration process we use the email of the users to asign them as the owner of an issue, the comments,&#8230;&#8203;</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_issues">6.3. Issues</h3>
+<div class="paragraph">
+<p>All the issues of the projects are migrated to Taiga and the Redmine trackers, priorities and status are also migrated.
+For every issue besides the basic data we migrate the comments, attachments and assigned user.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_wiki">6.4. Wiki</h3>
+<div class="paragraph">
+<p>Wikis are one of those cases where the migration is not perfect. Redmine supports different markup languages such as <code>textile</code> or <code>reStructuredText</code>. Taiga wikis are written in <code>Markdown</code> so you might need to fix some formats after the migration.
+Besides the text of the wikipages, all the attachments are also migrated to the wikipages.</p>
+</div>
+<div class="paragraph">
+<p>Another important thing is that in Taiga the main wiki page is called <code>Home</code> and in Redmine, by default it is <code>Wiki</code>. Even so it&#8217;s possible to change the default wiki page in Redmine. As Redmine API doesn&#8217;t expose the name of the default wiki page we try to figure it out which is the default page. We try with <code>home</code> or <code>wiki</code> and if none of these pages exists in Redmine, we set the oldest page as the new home page.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_files">6.5. Files</h3>
+<div class="paragraph">
+<p>Currently Redmine does not expose the files in the REST API, so it is not possible to migrate them.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_documents">6.6. Documents</h3>
+<div class="paragraph">
+<p>Currently Redmine does not expose the documents in the REST API, so it is not possible to migrate them.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sprints_user_stories_and_tasks">6.7. Sprints, User stories and Tasks</h3>
+<div class="paragraph">
+<p>All the issues in Redmine are migrated to issues in Taiga, so after the migration the backlog will be empty. We use in Redmine <a href="http://www.redminebacklogs.net/">the backlogs plugin</a> for scrum.
+For the next major release of the migrator we&#8217;re going to migrate the sprints, user stories and tasks of the Redmine Backlogs plugin to Sprints, User stories and Tasks in Taiga.</p>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_release_notes">7. Release notes</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/taigaio/redmine-to-taiga/releases/tag/1.0.0" target="_blank">1.0.0</a> - XX/XXX/2014 - First public version</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2015-04-22 12:32:13 CEST
+</div>
+</div>
+</body>
+</html>
