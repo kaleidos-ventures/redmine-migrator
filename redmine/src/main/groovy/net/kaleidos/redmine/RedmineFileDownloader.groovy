@@ -1,6 +1,9 @@
 package net.kaleidos.redmine
 
 import groovy.util.logging.Log4j
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.client.HttpClient
+
 
 @Log4j
 class RedmineFileDownloader {
@@ -10,10 +13,12 @@ class RedmineFileDownloader {
     private final String EMPTY = ''
     private final String FILE = 'file'
     private final String HTTP_FIX_PATTERN = "http[s]{0,1}"
+    private final HttpClient client
 
-    RedmineFileDownloader(String host, String apiKey) {
+    RedmineFileDownloader(HttpClient client, String host, String apiKey) {
         this.apiKey = apiKey
         this.host = host
+        this.client = client
     }
 
     byte[] download(String uri) {
@@ -26,11 +31,16 @@ class RedmineFileDownloader {
                     HTTP_FIX_PATTERN,
                     URI.create(host).scheme)
 
-        def url = new URL(fixedProtocolUri)
+        def get      = new HttpGet(fixedProtocolUri)
+        def response = client.execute(get)
+        def entity   = response.entity
+        def out      = new ByteArrayOutputStream()
 
-        log.debug("Downloading attachment $url")
+        log.debug("Downloading attachment $fixedProtocolUri")
 
-        return url.bytes
+        entity.writeTo(out)
+
+        return out.toByteArray()
     }
 
 }

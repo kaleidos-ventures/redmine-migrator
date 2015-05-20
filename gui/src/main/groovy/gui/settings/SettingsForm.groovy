@@ -31,6 +31,12 @@ class SettingsForm extends javax.swing.JPanel {
                 jLabel5 = new javax.swing.JLabel();
                 jPasswordField1 = new javax.swing.JPasswordField();
 
+                connectionTimeoutLabel = new javax.swing.JLabel();
+                connectionTimeout = new javax.swing.JSpinner();
+
+                connectionTimeoutLabel.setName('redmineTimeoutLabel')
+                connectionTimeout.setName('redmineTimeout')
+
                 jSeparator1.setName('redmineSeparator')
                 jSeparator2.setName('taigaSeparator')
                 jLabel1.setName("redmineUrlLabel");
@@ -85,13 +91,20 @@ class SettingsForm extends javax.swing.JPanel {
                                         .addComponent(jSeparator2)
                                         .addComponent(jTextField3)
                                         .addComponent(jTextField4)
+
+                                          .addComponent(connectionTimeout)
+
                                         .addGroup(layout.createSequentialGroup()
                                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                         .addComponent(jLabel1)
                                                         .addComponent(jLabel2)
                                                         .addComponent(jLabel3)
                                                         .addComponent(jLabel4)
-                                                        .addComponent(jLabel5))
+                                                        .addComponent(jLabel5)
+
+                                                          .addComponent(connectionTimeoutLabel)
+
+                                                         )
                                                 .addGap(0, 0, Short.MAX_VALUE))
                                         .addComponent(jPasswordField1))
                                 .addContainerGap())
@@ -109,6 +122,15 @@ class SettingsForm extends javax.swing.JPanel {
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+
+                                .addComponent(connectionTimeoutLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(connectionTimeout, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+
+
                                 .addGap(18, 18, 18)
                                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -123,6 +145,9 @@ class SettingsForm extends javax.swing.JPanel {
                                 .addComponent(jLabel5)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+
+
+
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 134, Short.MAX_VALUE)
                                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap())
@@ -140,11 +165,13 @@ class SettingsForm extends javax.swing.JPanel {
         private javax.swing.JLabel jLabel4;
         private javax.swing.JLabel jLabel5;
         private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel connectionTimeoutLabel;
         private javax.swing.JPasswordField jPasswordField1;
         private javax.swing.JTextField jTextField1;
         private javax.swing.JTextField jTextField2;
         private javax.swing.JTextField jTextField3;
         private javax.swing.JTextField jTextField4;
+    private javax.swing.JSpinner connectionTimeout;
         private JXTitledSeparator jSeparator1;
         private JXTitledSeparator jSeparator2;
 

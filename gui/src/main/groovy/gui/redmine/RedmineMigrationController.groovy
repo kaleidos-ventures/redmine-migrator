@@ -2,22 +2,19 @@ package gui.redmine
 
 import static org.viewaframework.util.ComponentFinder.find
 
-import javax.swing.*
-import java.awt.event.ActionEvent
 import groovy.util.logging.Log4j
 
-import org.viewaframework.view.*
-import org.viewaframework.util.*
-import org.viewaframework.view.perspective.*
-import org.viewaframework.widget.view.*
+import java.awt.event.ActionEvent
+import org.viewaframework.view.ViewContainer
 
 import com.taskadapter.redmineapi.RedmineManager
 import com.taskadapter.redmineapi.RedmineManagerFactory
 import com.taskadapter.redmineapi.bean.Project
 
+import fnz.data.Try
+
 import gui.settings.Settings
 import gui.settings.SettingsService
-import gui.swingx.JXBusyFeedbackLabel
 import gui.migration.MigrationProgress
 import gui.migration.MigrationProgressView
 import gui.controller.MigrationProgressAwareController
@@ -32,72 +29,73 @@ class RedmineMigrationController extends MigrationProgressAwareController {
     @Override
     void handleView(ViewContainer view, ActionEvent event) {
         log.debug("Getting selected objects")
-        def selectedProjectList =
-            locate(RedmineProjectListView.ID)
-                .model
-                .selectedObjects
-        def total = selectedProjectList.size()
-        def service = new SettingsService()
-        def settings = service.loadSettings()
+
+        Try result = $do {
+            service  = Try { new SettingsService() }
+            settings = Try { service.loadSettings() }
+            _        = Try { checkAvailability(service, settings) }
+            migrator = buildMigratorWithSettings(settings)
+            total    = Try { migrateProjectsWith(selectedProjectList, migrator) }
+
+            $return total
+        }
+
+        publishResult(result)
+    }
+
+    void checkAvailability(final SettingsService service, final Settings settings) {
+        if (!service.areServicesUp(settings.redmineUrl, settings.taigaUrl)) {
+            throw new IllegalStateException("Please check your connections!!")
+        }
+    }
+
+    void publishResult(final Try.Success success) {
+        publishSuccess()
+    }
+
+    void publishResult(final Try.Failure failure) {
+        publishFailure(failure.exception)
+    }
+
+    Integer migrateProjectsWith(final List<Project> projects, final RedmineMigrator migrator) {
+        Integer total = projects.size()
 
         log.debug("Migrating $total projects")
 
-        if (!service.areServicesUp(settings.redmineUrl, settings.taigaUrl)) {
-            publishFailure(new Exception("Please check your connections!!"))
-            return
-        }
-
-        def migrator = buildMigratorWithSettings(settings)
-
-        try {
-
-            selectedProjectList.eachWithIndex { Project project, index ->
-                migrator.migrateProject(
-                    project,
-                    progressClosure(project.name, (index + 1).div(total + 1))
-                )
-            }
-
-            publishSuccess()
-
-        } catch(Throwable th) {
-           publishFailure(th)
-        }
-
-    }
-
-    RedmineMigrator buildMigratorWithSettings(Settings settings) {
-        def redmineClient =
-            RedmineClientFactory.newInstance(
-                settings.redmineUrl,
-                settings.redmineApiKey)
-        def taigaClient =
-            new TaigaClient(settings.taigaUrl)
-                .authenticate(
-                    settings.taigaUsername,
-                    settings.taigaPassword)
-
-        return new RedmineMigrator(redmineClient, taigaClient)
-    }
-
-    Closure<Void> progressClosure = { final String projectName, final BigDecimal overallProgress ->
-        return { String message, BigDecimal progress = overallProgress ->
-             publish(
-                new MigrationProgress(
-                    projectName: projectName,
-                    message: message,
-                    progress: progress
-                )
+        projects.eachWithIndex { Project project, Integer index ->
+            migrator.migrateProject(
+                project,
+                getProgressClosure(project.name, (index + 1).div(total + 1))
             )
         }
+
+        return total
     }
 
-    String buildMessage(MigrationProgress migrationProgress) {
-        if (!migrationProgress.projectName) {
-            return migrationProgress.message
-        }
+    List<Project> getSelectedProjectList() {
+       return locate(RedmineProjectListView.ID).model.selectedObjects
+    }
 
-        return "${migrationProgress.projectName} : ${migrationProgress.message}"
+    Try<RedmineMigrator> buildMigratorWithSettings(final Settings settings) {
+        return $do {
+            redmine  = Try { RedmineClientFactory.newInstance(settings.properties) }
+            taiga    = Try { initTaigaClientWith(settings) }
+
+            $return new RedmineMigrator(redmine, taiga)
+        }
+    }
+
+    TaigaClient initTaigaClientWith(final Settings settings) {
+        return new TaigaClient(settings.taigaUrl).authenticate(
+            settings.taigaUsername,
+            settings.taigaPassword
+        )
+    }
+
+    Closure<Void> getProgressClosure(final String projectName, final BigDecimal overallProgress) {
+        return { String msg, BigDecimal progress = overallProgress ->
+             publish(new MigrationProgress(projectName: projectName, message: msg, progress: progress))
+        }
     }
 
 }

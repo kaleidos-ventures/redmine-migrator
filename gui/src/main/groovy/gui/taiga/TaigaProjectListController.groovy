@@ -44,7 +44,7 @@ class TaigaProjectListController extends
         }
 
         projectsView.model.clear()
-        view.rootPane.glassPane.visible = true
+        locateRootView().rootPane.glassPane.visible = true
     }
 
     ViewContainer getProjectListView() {
@@ -83,7 +83,7 @@ class TaigaProjectListController extends
     @Override
     void postHandlingView(ViewContainer viewContainer, ActionEvent event) {
         def rows = taigaProjectListView.model.rowCount
-        viewContainer.rootPane.glassPane.visible = false
+        locateRootView().rootPane.glassPane.visible = false
 
         if (!rows) {
             updateStatus("No Taiga projects found", 0)

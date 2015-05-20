@@ -19,6 +19,9 @@ import javax.swing.plaf.FontUIResource;
 import javax.swing.plaf.InsetsUIResource;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
+import javax.swing.InputMap
+import javax.swing.KeyStroke
+
 import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.painter.MattePainter;
 
@@ -43,7 +46,7 @@ class TaigaAppLauncher extends DefaultApplicationLauncher {
     }
 
     void modifyTitlePanelTaigaBackground() {
-        Color primaryBackground = getSafeColor('ProgressBar.selectionBackground', new ColorUIResource(49, 121, 242))
+        Color primaryBackground = getSafeColor('ProgressBar.selectionBackground', new ColorUIResource(114, 161, 20))
         Color lighterPrimaryBackground = primaryBackground.brighter()
 
         GradientPaint gradient = new GradientPaint(0, 0, primaryBackground, 0, 1, lighterPrimaryBackground)
@@ -53,6 +56,14 @@ class TaigaAppLauncher extends DefaultApplicationLauncher {
             'JXTitledPanel.titlePainter',
             new PainterUIResource<JXTitledPanel>(new MattePainter(gradient, true))
         )
+
+        // Change button key action to ENTER
+        InputMap im = (InputMap)UIManager.get("Button.focusInputMap")
+        im.put( KeyStroke.getKeyStroke( "ENTER" ), "pressed" )
+        im.put( KeyStroke.getKeyStroke( "released ENTER" ), "released" )
+
+        UIManager.put('Button.focusInputMap', im)
+
     }
 
 }

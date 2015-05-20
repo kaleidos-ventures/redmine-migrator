@@ -7,6 +7,7 @@ class Settings {
 
     String redmineUrl
     String redmineApiKey
+    Integer redmineTimeout
 
     String taigaUrl
     String taigaUsername

@@ -2,6 +2,7 @@ package gui.settings
 
 import static org.viewaframework.util.ComponentFinder.find
 
+import javax.swing.JSpinner
 import javax.swing.JTextField
 import javax.swing.JPasswordField
 
@@ -16,9 +17,11 @@ class CheckStoredSettingsListener extends GlassPaneAwareListener {
 
         def textFieldFinder = find(JTextField).in(event.source)
         def passwordFinder = find(JPasswordField).in(event.source)
+        def spinnerFinder = find(JSpinner).in(event.source)
 
         def addressField = textFieldFinder.named('redmineUrl')
         def apiKeyField = textFieldFinder.named('redmineApiKey')
+        def timeoutField = spinnerFinder.named('redmineTimeout')
         def taigaUrl = textFieldFinder.named('taigaUrl')
         def taigaUsername = textFieldFinder.named('taigaUsername')
         def taigaPassword = passwordFinder.named('taigaPassword')
@@ -27,6 +30,7 @@ class CheckStoredSettingsListener extends GlassPaneAwareListener {
 
         addressField.text = settings.redmineUrl
         apiKeyField.text = settings.redmineApiKey
+        timeoutField.value = settings.redmineTimeout
         taigaUrl.text = settings.taigaUrl
         taigaUsername.text = settings.taigaUsername
         taigaPassword.text = settings.taigaPassword
