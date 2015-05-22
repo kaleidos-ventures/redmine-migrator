@@ -48,17 +48,6 @@ class DeleteTaigaProjectController extends DefaultActionViewControllerWorker<Pro
         def total = selectedProjectList?.size()
         def service = new SettingsService()
         def settings = service.loadSettings()
-
-        if (!service.areServicesUp(settings.taigaUrl)) {
-            publish(
-                new MigrationProgress(
-                    exception: new Exception("Please check your connections!!"),
-                    progress: 1.0
-                )
-            )
-            return
-        }
-
         def taigaClient =
             new TaigaClient(settings.taigaUrl)
                 .authenticate(

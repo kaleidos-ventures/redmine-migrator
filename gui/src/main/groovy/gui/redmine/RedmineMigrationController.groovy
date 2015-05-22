@@ -33,7 +33,6 @@ class RedmineMigrationController extends MigrationProgressAwareController {
         Try result = $do {
             service  = Try { new SettingsService() }
             settings = Try { service.loadSettings() }
-            _        = Try { checkAvailability(service, settings) }
             migrator = buildMigratorWithSettings(settings)
             total    = Try { migrateProjectsWith(selectedProjectList, migrator) }
 
@@ -41,12 +40,6 @@ class RedmineMigrationController extends MigrationProgressAwareController {
         }
 
         publishResult(result)
-    }
-
-    void checkAvailability(final SettingsService service, final Settings settings) {
-        if (!service.areServicesUp(settings.redmineUrl, settings.taigaUrl)) {
-            throw new IllegalStateException("Please check your connections!!")
-        }
     }
 
     void publishResult(final Try.Success success) {

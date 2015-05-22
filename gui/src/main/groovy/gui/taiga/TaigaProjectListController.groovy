@@ -55,19 +55,16 @@ class TaigaProjectListController extends
     void handleView(ViewContainer view, ActionEvent event) {
         def service = new SettingsService()
         def settings = service.loadSettings()
-        def areUp = service.areServicesUp(settings.taigaUrl)
 
-        if (areUp) {
-            def taigaClient =
-                new TaigaClient(settings.taigaUrl)
-                    .authenticate(
-                        settings.taigaUsername,
-                        settings.taigaPassword
-                    )
+        def taigaClient =
+            new TaigaClient(settings.taigaUrl)
+            .authenticate(
+                settings.taigaUsername,
+                settings.taigaPassword
+            )
 
 
-            publish(taigaClient.projects)
-        }
+        publish(taigaClient.projects)
 
     }
 
