@@ -6,6 +6,8 @@ import groovy.util.logging.Log4j
 @Log4j
 class SettingsService {
 
+    final static Integer TIMEOUT = 10000;
+
     static File configFile =
         new File(
             System.getProperty('user.home'),
@@ -41,7 +43,7 @@ class SettingsService {
         return new Settings(
             redmineUrl: ini.get('Redmine','url'),
             redmineApiKey: ini.get('Redmine', 'apiKey'),
-            redmineTimeout: ini.get('Redmine', 'timeout', int.class),
+            redmineTimeout: ini.get('Redmine', 'timeout', int.class) ?: TIMEOUT,
             taigaUrl: ini.get('Taiga', 'url'),
             taigaUsername: ini.get('Taiga', 'username'),
             taigaPassword: ini.get('Taiga', 'password')
