@@ -124,6 +124,10 @@ class RedmineProjectListController extends DefaultActionViewControllerWorker<Pro
         updateStatus(val(message), progress)
     }
 
+    void updateStatus(final Try.Failure<String> message, final Integer progress) {
+        updateStatus(message)
+    }
+
     void updateStatus(final Try.Failure failure) {
         updateStatus(failure.exception.message, 0)
     }
