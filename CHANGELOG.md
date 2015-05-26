@@ -1,3 +1,14 @@
+## 1.0.1
+
+### Issues
+
+- Filtering public projects that not belong to the user
+- Workaround to avoid user migration membership creation in Taiga
+- Add Redmine default timeout. 10 seconds
+- Fix bug related to GUI when updating redmin project list
+- Fix bug related to checking service availability. Getting rid of the code
+- Fix documentation bad github URL
+
 ## 1.0.0
 
 ### Features
