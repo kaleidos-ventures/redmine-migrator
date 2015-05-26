@@ -6,6 +6,8 @@ import groovy.util.logging.Log4j
 @Log4j
 class SettingsService {
 
+    final static Integer TIMEOUT = 10000;
+
     static File configFile =
         new File(
             System.getProperty('user.home'),
@@ -41,42 +43,12 @@ class SettingsService {
         return new Settings(
             redmineUrl: ini.get('Redmine','url'),
             redmineApiKey: ini.get('Redmine', 'apiKey'),
-            redmineTimeout: ini.get('Redmine', 'timeout', int.class),
+            redmineTimeout: ini.get('Redmine', 'timeout', int.class) ?: TIMEOUT,
             taigaUrl: ini.get('Taiga', 'url'),
             taigaUsername: ini.get('Taiga', 'username'),
             taigaPassword: ini.get('Taiga', 'password')
         )
 
-    }
-
-    boolean areServicesUp(String... urls) throws Exception {
-        log.debug("Checking services ${urls}")
-        return urls.every { url ->
-            try {
-                def host = new URL(url).host
-
-                log.debug("Checking ${host}")
-
-                def address = InetAddress.getByName(host)
-                def reachable = address.isReachable(3000)
-
-                if(!reachable) {
-                    // awful race condition
-                    Thread.sleep(3000)
-                }
-
-                if (reachable) {
-                    log.debug("Service ${host} seems to be up and running")
-                } else {
-                    log.error("Host ${host} seems to be down. Please check your connections")
-                }
-
-                return reachable
-            } catch(e) {
-                log.error("Exception while checking host ${host}")
-                return false
-            }
-        }
     }
 
 }

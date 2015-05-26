@@ -21,6 +21,7 @@ import org.viewaframework.widget.view.*
 
 import net.kaleidos.domain.Project
 import net.kaleidos.taiga.TaigaClient
+import net.kaleidos.taiga.builder.ProjectBuilder
 
 import gui.settings.SettingsService
 import gui.controller.DefaultViewControllerWorker
@@ -55,19 +56,23 @@ class TaigaProjectListController extends
     void handleView(ViewContainer view, ActionEvent event) {
         def service = new SettingsService()
         def settings = service.loadSettings()
-        def areUp = service.areServicesUp(settings.taigaUrl)
 
-        if (areUp) {
-            def taigaClient =
-                new TaigaClient(settings.taigaUrl)
-                    .authenticate(
-                        settings.taigaUsername,
-                        settings.taigaPassword
-                    )
+        def taigaClient =
+            new TaigaClient(settings.taigaUrl)
+            .authenticate(
+                settings.taigaUsername,
+                settings.taigaPassword
+            )
 
+        // This is a workaround
+        // TODO move to taiga client.
+        def userId = taigaClient.doGet('/api/v1/users/me').id
+        def filteredProjectList =
+             taigaClient
+                .doGet("/api/v1/projects?member=$userId&page_size=500")
+                .collect { new ProjectBuilder().build(it, null) }
 
-            publish(taigaClient.projects)
-        }
+        publish(filteredProjectList)
 
     }
 

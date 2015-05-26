@@ -76,7 +76,6 @@ class RedmineProjectListController extends DefaultActionViewControllerWorker<Pro
         Try result = $do {
             service  = Try { new SettingsService() }
             settings = Try { service.loadSettings() }
-            _        = Try { checkAvailability(service, settings) }
             redmine  = Try { RedmineClientFactory.newInstance(settings.properties) }
             projects = Try { redmine.findAllProject() }
 
@@ -92,12 +91,6 @@ class RedmineProjectListController extends DefaultActionViewControllerWorker<Pro
 
     void publishResult(final Try.Failure failure) {
         log.error(failure.exception.message)
-    }
-
-    void checkAvailability(final SettingsService service, final Settings settings) {
-        if (!service.areServicesUp(settings.redmineUrl, settings.taigaUrl)) {
-            throw new IllegalStateException("Please check your connections!!")
-        }
     }
 
     @Override
@@ -129,6 +122,10 @@ class RedmineProjectListController extends DefaultActionViewControllerWorker<Pro
 
     void updateStatus(final Try.Success<String> message, final Integer progress) {
         updateStatus(val(message), progress)
+    }
+
+    void updateStatus(final Try.Failure<String> message, final Integer progress) {
+        updateStatus(message)
     }
 
     void updateStatus(final Try.Failure failure) {

@@ -29,6 +29,7 @@ import groovy.util.logging.Log4j
 
 import net.kaleidos.domain.Project
 import net.kaleidos.taiga.TaigaClient
+import net.kaleidos.taiga.builder.ProjectBuilder
 
 @Log4j
 class DeleteTaigaProjectController extends DefaultActionViewControllerWorker<Project> {
@@ -48,17 +49,6 @@ class DeleteTaigaProjectController extends DefaultActionViewControllerWorker<Pro
         def total = selectedProjectList?.size()
         def service = new SettingsService()
         def settings = service.loadSettings()
-
-        if (!service.areServicesUp(settings.taigaUrl)) {
-            publish(
-                new MigrationProgress(
-                    exception: new Exception("Please check your connections!!"),
-                    progress: 1.0
-                )
-            )
-            return
-        }
-
         def taigaClient =
             new TaigaClient(settings.taigaUrl)
                 .authenticate(
@@ -85,8 +75,17 @@ class DeleteTaigaProjectController extends DefaultActionViewControllerWorker<Pro
                 )
             )
         }
+
+        // This is a workaround
+        // TODO move to taiga client.
+        def userId = taigaClient.doGet('/api/v1/users/me').id
+        def filteredProjectList =
+             taigaClient
+                .doGet("/api/v1/projects?member=$userId&page_size=500")
+                .collect { new ProjectBuilder().build(it, null) }
+
         log.debug("Updating list")
-        model.addAll(taigaClient.projects)
+        model.addAll(filteredProjectList)
         log.debug("All selected projects deleted")
 
         publish(new MigrationProgress(progress:1.0))

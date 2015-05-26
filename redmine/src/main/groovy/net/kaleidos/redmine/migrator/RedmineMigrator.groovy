@@ -32,6 +32,7 @@ class RedmineMigrator {
         progressCallBack("[${redmineProject.name}] Creating project ")
         log.debug("MIGRATING ${redmineProject.name}")
 
+        projectMigrator.migrationUserEmail = migratorUserEmail
         projectMigrator
             .migrateProject(redmineProject)
             .each { RedmineTaigaRef ref ->
@@ -54,6 +55,11 @@ class RedmineMigrator {
 
         log.debug("PROJECT ${redmineProject.name} SUCCESSFULLY MIGRATED")
 
+    }
+
+    String getMigratorUserEmail() {
+        log.debug('Getting migration user info from Taiga')
+        return taigaClient.doGet('/api/v1/users/me').email
     }
 
 }
