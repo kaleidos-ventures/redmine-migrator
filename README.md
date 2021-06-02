@@ -1,3 +1,8 @@
+⚠️ Deprecation warning
+=====================
+
+This repository is deprecated and is no longer maintained.
+
 # Redmine to Taiga importer tool #
 
 The importer is a Desktop tool aimed to make it easier to migrate from Redmine to Taiga.
